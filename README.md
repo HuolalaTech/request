@@ -1,6 +1,18 @@
-# request
+# request · [![LICENSE](https://img.shields.io/npm/l/@huolala-tech/request)](LICENSE.txt)
 
 This is just a request library to support browsers and MiniProgram platforms.
+
+## Include
+
+```bash
+yarn add @huolala-tech/request
+```
+
+or
+
+```bash
+npm install @huolala-tech/request --save
+```
 
 ## Params
 
