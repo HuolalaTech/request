@@ -27,7 +27,7 @@ export const requestWithXhr = <T>({
           const hd = parseRawHeaderAsMap(xhr.getAllResponseHeaders());
           let res: any = responseText;
           const ct = hd["content-type"];
-          if (!ct || isApplicationJson(ct)) {
+          if ((!ct || isApplicationJson(ct)) && responseText) {
             res = JSON.parse(responseText);
           }
           resolve({ statusCode: status, headers: hd, data: res });
