@@ -35,3 +35,21 @@ export const request = setupInterceptorPair(
     }
   }
 );
+
+const globalThis =
+  typeof window === "object"
+    ? window
+    : typeof global === "object"
+    ? global
+    : null;
+if (globalThis) {
+  const key = "@huolala-tech/request";
+  if (key in globalThis) {
+    console.error(`${key} was installed duplicately with different versions.`);
+  } else {
+    Object.defineProperty(window, key, {
+      configurable: true,
+      value: request,
+    });
+  }
+}
