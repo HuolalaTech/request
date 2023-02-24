@@ -1,6 +1,6 @@
 import { toDataString } from "./toDataString";
 
-export const buildQs = (data: any) => {
+export const buildQs = (data: unknown) => {
   const obj = Object(data);
   return Object.keys(obj)
     .map((key) =>

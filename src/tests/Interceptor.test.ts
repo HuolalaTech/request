@@ -38,7 +38,8 @@ test("basic", async () => {
 
   icpt.eject(addOne);
   icpt.eject(mulTwo);
-  icpt.use(null, addOne);
+  const catchAndAddOne = (e: unknown) => addOne(e as A);
+  icpt.use(null, catchAndAddOne);
   await expect(
     Interceptor.wrap(icpt, Promise.resolve({ a: 1 }))
   ).resolves.toMatchObject({ a: 1 }); // Nothing to do
@@ -46,7 +47,7 @@ test("basic", async () => {
     Interceptor.wrap(icpt, Promise.reject({ a: 1 }))
   ).resolves.toMatchObject({ a: 2 }); // change "reject" to "resolve", 1 + 1
 
-  icpt.eject(null, addOne);
+  icpt.eject(null, catchAndAddOne);
   await expect(
     Interceptor.wrap(icpt, Promise.reject({ a: 1 }))
   ).rejects.toMatchObject({ a: 1 }); // Nothing to do
@@ -61,7 +62,8 @@ test("basic", async () => {
       if (typeof a === "number") return { a: a * 5 };
       return { a: 0 };
     },
-    ({ a }) => {
+    (e) => {
+      const { a } = Object(e);
       if (typeof a === "number") return { a: a * 3 };
       throw haha;
     }
@@ -98,7 +100,9 @@ test("void", async () => {
     b: number;
   }
   const icpt = new Interceptor<A>();
-  icpt.use(() => {});
+  icpt.use(() => {
+    /* noop */
+  });
   await expect(
     Interceptor.wrap(icpt, Promise.resolve({ a: 3, b: 9 }))
   ).resolves.toMatchObject({ a: 3, b: 9 });

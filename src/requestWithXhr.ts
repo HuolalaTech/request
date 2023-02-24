@@ -25,12 +25,12 @@ export const requestWithXhr = <T>({
       try {
         if (status >= 200 && status < 300) {
           const hd = parseRawHeaderAsMap(xhr.getAllResponseHeaders());
-          let res: any = responseText;
+          let res: unknown = responseText;
           const ct = hd["content-type"];
           if ((!ct || isApplicationJson(ct)) && responseText) {
             res = JSON.parse(responseText);
           }
-          resolve({ statusCode: status, headers: hd, data: res });
+          resolve({ statusCode: status, headers: hd, data: res as T });
         } else {
           reject(new HttpError(status));
         }

@@ -1,7 +1,8 @@
 import { InvokeResult } from "./types/InvokeResult";
 import { InvokeParams } from "./types/InvokeParams";
+import type { Wx } from "./types/libs";
 
-declare const swan: any;
+declare const swan: Wx;
 
 export const requestWithSwan = <T>(args: InvokeParams) =>
   new Promise<InvokeResult<T>>((success, fail) => {
@@ -16,8 +17,8 @@ export const requestWithSwan = <T>(args: InvokeParams) =>
         header: headers,
         data,
         ...rest,
-        success: ({ header, ...rest }: any) =>
-          success({ ...rest, headers: header }),
+        success: ({ header, data, ...rest }) =>
+          success({ data: data as T, headers: header, ...rest }),
         fail,
       });
     } else if (fileNames.length === 1) {
@@ -32,8 +33,8 @@ export const requestWithSwan = <T>(args: InvokeParams) =>
         name,
         filePath,
         ...rest,
-        success: ({ header, ...rest }: any) =>
-          success({ ...rest, headers: header }),
+        success: ({ header, data, ...rest }) =>
+          success({ headers: header, data: data as T, ...rest }),
         fail,
       });
     } else {

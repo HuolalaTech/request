@@ -3,4 +3,5 @@ dist
 .*
 !.gitignore
 !.eslintrc.js
-!.npmrc
+!.npmrc!.prettierignore
+!.husky

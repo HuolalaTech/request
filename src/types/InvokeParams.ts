@@ -6,7 +6,7 @@ export interface InvokeParams {
 
   url: string;
 
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
 
   timeout?: number;
 

@@ -1,7 +1,7 @@
-declare var my: any;
+import type { Wx, WxReq1, WxReq2 } from "../../types/libs";
 
-(global as any).wx = new (class {
-  request(req: any) {
+class WxConstructor implements Wx {
+  request(req: WxReq1) {
     const { header, ...rest } = req;
     setTimeout(() => {
       req.success({
@@ -11,7 +11,7 @@ declare var my: any;
       });
     });
   }
-  uploadFile(req: any) {
+  uploadFile(req: WxReq2) {
     const { header, name, filePath, formData, ...rest } = req;
     setTimeout(() => {
       req.success({
@@ -26,4 +26,6 @@ declare var my: any;
       });
     });
   }
-})() as any;
+}
+
+Object.defineProperty(global, "wx", { value: new WxConstructor() });

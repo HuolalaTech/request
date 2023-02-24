@@ -1,7 +1,7 @@
-declare var my: any;
+import type { My, MyReq1, WxReq2 } from "../../types/libs";
 
-(global as any).my = new (class {
-  request(req: any) {
+class MyConstructor implements My {
+  request(req: MyReq1) {
     const { headers, ...rest } = req;
     setTimeout(() => {
       req.success({
@@ -11,7 +11,7 @@ declare var my: any;
       });
     });
   }
-  uploadFile(req: any) {
+  uploadFile(req: WxReq2) {
     const { header, name, filePath, formData, ...rest } = req;
     setTimeout(() => {
       req.success({
@@ -26,4 +26,6 @@ declare var my: any;
       });
     });
   }
-})() as any;
+}
+
+Object.defineProperty(global, "my", { value: new MyConstructor() });

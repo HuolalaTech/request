@@ -1,7 +1,8 @@
 import { InvokeResult } from "./types/InvokeResult";
 import { InvokeParams } from "./types/InvokeParams";
+import { My } from "./types/libs";
 
-declare const my: any;
+declare const my: My;
 
 export const requestWithMy = <T>(args: InvokeParams) =>
   new Promise<InvokeResult<T>>((success, fail) => {
@@ -12,7 +13,15 @@ export const requestWithMy = <T>(args: InvokeParams) =>
       /**
        * @see https://opendocs.alipay.com/mini/api/owycmh
        */
-      my.request({ headers, data, ...rest, success, fail });
+      my.request({
+        headers,
+        data,
+        ...rest,
+        success: ({ data, ...rest }) => {
+          success({ data: data as T, ...rest });
+        },
+        fail,
+      });
     } else if (fileNames.length === 1) {
       const name = fileNames[0];
       const filePath = files?.[name];
@@ -25,8 +34,8 @@ export const requestWithMy = <T>(args: InvokeParams) =>
         name,
         filePath,
         ...rest,
-        success: ({ header, ...rest }: any) =>
-          success({ ...rest, headers: header }),
+        success: ({ header, data, ...rest }) =>
+          success({ headers: header, data: data as T, ...rest }),
         fail,
       });
     } else {

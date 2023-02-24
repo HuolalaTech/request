@@ -1,7 +1,7 @@
-declare var swan: any;
+import type { Swan, WxReq1, WxReq2 } from "../../types/libs";
 
-(global as any).swan = new (class {
-  request(req: any) {
+class SwanConstructor implements Swan {
+  request(req: WxReq1) {
     const { header, ...rest } = req;
     setTimeout(() => {
       req.success({
@@ -11,7 +11,7 @@ declare var swan: any;
       });
     });
   }
-  uploadFile(req: any) {
+  uploadFile(req: WxReq2) {
     const { header, name, filePath, formData, ...rest } = req;
     setTimeout(() => {
       req.success({
@@ -26,4 +26,6 @@ declare var swan: any;
       });
     });
   }
-})() as any;
+}
+
+Object.defineProperty(global, "swan", { value: new SwanConstructor() });

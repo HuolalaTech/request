@@ -7,10 +7,11 @@ import { Interceptor } from "./Interceptor";
 import type { InvokeParams } from "./types/InvokeParams";
 import type { InvokeResult } from "./types/InvokeResult";
 import { setupInterceptorPair } from "./InterceptorPair";
+import { My, Swan, Wx } from "./types/libs";
 
-declare const wx: any;
-declare const my: any;
-declare const swan: any;
+declare const wx: Wx;
+declare const my: My;
+declare const swan: Swan;
 
 export const interceptors = {
   request: new Interceptor<InvokeParams>(),
@@ -47,7 +48,7 @@ if (globalThis) {
   if (key in globalThis) {
     console.error(`${key} was installed duplicately with different versions.`);
   } else {
-    Object.defineProperty(window, key, {
+    Object.defineProperty(globalThis, key, {
       configurable: true,
       value: request,
     });

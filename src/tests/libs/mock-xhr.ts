@@ -1,45 +1,44 @@
 import { EventEmitter } from "events";
 
 global.FormData = class {
-  readonly entries: any[] = [];
-  forEach(fn: (v: any, k: string) => void) {
+  readonly entries: [string, unknown][] = [];
+  forEach(fn: (v: unknown, k: string) => void) {
     this.entries.forEach(([key, value]) => fn(value, key));
   }
-  append(key: string, value: any) {
+  append(key: string, value: unknown) {
     this.entries.push([key, value]);
   }
   toJSON() {
     return Object.fromEntries(this.entries);
   }
-} as any;
+} as unknown as typeof FormData;
 
 global.File = class {
-  readonly name: string;
-  readonly data: any;
+  readonly name;
+  readonly data;
   constructor(fileBits: BlobPart[], fileName: string) {
     this.data = fileBits;
     this.name = fileName;
   }
-} as any;
+} as unknown as typeof File;
 
 global.XMLHttpRequest = class {
   em = new EventEmitter();
-  openArgs: any = null;
+  openArgs: unknown[] = [];
   readyState = 0;
   status = 0;
   responseText = "";
-  headers: any = {};
-  open(...args: any[]) {
+  headers: Record<string, string> = {};
+  open(...args: unknown[]) {
     this.openArgs = args;
     this.readyState = 1;
   }
   send(body: string | FormData) {
     const files: Record<string, File> = {};
-    let data: any = body;
-    if (typeof data === "string") {
-      data = JSON.parse(data);
+    let data: Record<string, unknown> = {};
+    if (typeof body === "string") {
+      data = JSON.parse(body);
     } else if (body instanceof FormData) {
-      data = {};
       body.forEach((v, k) => {
         if (v instanceof File) {
           files[k] = v;
@@ -75,4 +74,4 @@ global.XMLHttpRequest = class {
   getAllResponseHeaders() {
     return "server: mock\r\n";
   }
-} as any;
+} as unknown as typeof XMLHttpRequest;

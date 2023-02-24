@@ -4,7 +4,9 @@ export type ResolveHandler<T> = MayBeNull<
   (current: T) => void | Partial<T> | PromiseLike<Partial<T>>
 >;
 
-export type RejectHandler<T> = MayBeNull<(error: any) => T | PromiseLike<T>>;
+export type RejectHandler<T> = MayBeNull<
+  (error: unknown) => T | PromiseLike<T>
+>;
 
 export class Interceptor<T> {
   private handlers = [] as [ResolveHandler<T>, RejectHandler<T>][];
