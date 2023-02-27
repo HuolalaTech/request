@@ -1,3 +1,14 @@
+## 0.0.5
+
+- Fix request<T> generic type
+
+## 0.0.4
+
+- Update dependencies
+- Update comments
+- Support context for interceptors
+- Fix types
+
 ## 0.0.3
 
 - Throw an error on duplicate installation
