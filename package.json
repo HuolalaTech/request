@@ -1,6 +1,6 @@
 {
   "name": "@huolala-tech/request",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "This is just a request library to support browsers and MiniProgram platforms.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
