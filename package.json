@@ -2,11 +2,12 @@
   "name": "@huolala-tech/request",
   "version": "0.0.3",
   "description": "This is just a request library to support browsers and MiniProgram platforms.",
-  "main": "dist/cjs/request.js",
-  "module": "dist/esm/request.js",
-  "types": "dist/esm/request.d.ts",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
   "scripts": {
     "build": "rollup -c",
+    "start": "rollup -c --watch",
     "test": "jest"
   },
   "files": [

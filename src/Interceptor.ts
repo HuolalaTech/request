@@ -1,21 +1,21 @@
 export type MayBeNull<T> = T | null;
 
-export type ResolveHandler<T> = MayBeNull<
-  (current: T) => void | Partial<T> | PromiseLike<Partial<T>>
+export type ResolveHandler<T, C> = MayBeNull<
+  (current: T & C) => void | Partial<T> | PromiseLike<Partial<T>>
 >;
 
-export type RejectHandler<T> = MayBeNull<
-  (error: unknown) => T | PromiseLike<T>
+export type RejectHandler<T, C> = MayBeNull<
+  (error: unknown & C) => T | PromiseLike<T>
 >;
 
-export class Interceptor<T> {
-  private handlers = [] as [ResolveHandler<T>, RejectHandler<T>][];
+export class Interceptor<T, C = unknown> {
+  private handlers = [] as [ResolveHandler<T, C>, RejectHandler<T, C>][];
   /**
    * Add an interceptor
    */
   use(
-    onfulfilled: ResolveHandler<T> = null,
-    onrejected: RejectHandler<T> = null
+    onfulfilled: ResolveHandler<T, C> = null,
+    onrejected: RejectHandler<T, C> = null
   ) {
     this.handlers.push([onfulfilled, onrejected]);
   }
@@ -23,8 +23,8 @@ export class Interceptor<T> {
    * Remove an interceptor
    */
   eject(
-    onfulfilled: ResolveHandler<T> = null,
-    onrejected: RejectHandler<T> = null
+    onfulfilled: ResolveHandler<T, C> = null,
+    onrejected: RejectHandler<T, C> = null
   ) {
     const { handlers } = this;
     for (let i = 0; i < handlers.length; i++) {
@@ -36,19 +36,31 @@ export class Interceptor<T> {
     return false;
   }
 
-  static wrap<T>(interceptor: Interceptor<T>, task: Promise<T>) {
+  static wrap<R extends object, C>(
+    interceptor: Interceptor<R, C>,
+    task: Promise<R>,
+    context?: C
+  ) {
     const { handlers } = interceptor;
     let t = task;
     for (let i = 0; i < handlers.length; i++) {
-      const resolve = handlers[i][0];
+      const [resolve, reject] = handlers[i];
       t = t.then(({ ...args }) => {
         if (resolve) {
-          return Promise.resolve(args)
+          const mArgs = { ...args, ...Object(context) } as R & C;
+          return Promise.resolve(mArgs)
             .then(resolve)
-            .then((updates) => ({ ...args, ...updates }));
+            .then((updates) => {
+              const result = { ...mArgs, ...updates };
+              if (context) {
+                const keys = Object.keys(context) as (keyof C)[];
+                keys.forEach((key) => delete result[key]);
+              }
+              return result as R;
+            });
         }
         return args;
-      }, handlers[i][1]);
+      }, reject);
     }
     return t;
   }

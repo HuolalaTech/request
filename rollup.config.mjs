@@ -5,7 +5,7 @@ import fs from "fs";
 const pkg = JSON.parse(fs.readFileSync("./package.json"));
 
 const basic = {
-  input: "src/request.ts",
+  input: "src/index.ts",
   plugins: [
     typescript({
       tsconfigOverride: {
