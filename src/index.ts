@@ -12,8 +12,12 @@ export const interceptors = {
   response: new Interceptor<InvokeResult, InvokeContext>(),
 };
 
-// Export the `request` function and surround it with intercepters.
-export const request = (args: InvokeParams) => {
+/**
+ * Send a http request.
+ * NOTE: The generic parameter T is not validated.
+ * @returns {Promise<T>}
+ */
+export const request = <T = unknown>(args: InvokeParams) => {
   const { request, response } = interceptors;
   // Execute request handlers as a pipeline.
   return Interceptor.pipeline(request, Promise.resolve(args)).then((params) => {
@@ -22,7 +26,9 @@ export const request = (args: InvokeParams) => {
     // Call the internal request method and wrap it as a promise.
     const resTask = Promise.resolve(params).then(internalRequest);
     // Execute response handlers as a pipeline.
-    return Interceptor.pipeline(response, resTask, context);
+    return Interceptor.pipeline(response, resTask, context) as Promise<
+      InvokeResult<T>
+    >;
   });
 };
 
