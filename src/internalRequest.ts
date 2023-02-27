@@ -10,6 +10,7 @@ declare const my: My;
 declare const swan: Swan;
 
 export const internalRequest = <T>(args: InvokeParams) => {
+  // Detect the current platform and call the corresponding method.
   switch (true) {
     case typeof XMLHttpRequest === "function":
       return requestWithXhr<T>(args);

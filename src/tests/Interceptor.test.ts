@@ -18,22 +18,22 @@ test("basic", async () => {
 
   icpt.use(addOne);
   await expect(
-    Interceptor.wrap(icpt, Promise.resolve({ a: 1 }), {})
+    Interceptor.pipeline(icpt, Promise.resolve({ a: 1 }), {})
   ).resolves.toMatchObject({ a: 2 }); // 1 + 1
 
   icpt.use(mulTwo);
   await expect(
-    Interceptor.wrap(icpt, Promise.resolve({ a: 1 }), {})
+    Interceptor.pipeline(icpt, Promise.resolve({ a: 1 }), {})
   ).resolves.toMatchObject({ a: 4 }); // (1 + 1) * 2
 
   icpt.eject(addOne);
   await expect(
-    Interceptor.wrap(icpt, Promise.resolve({ a: 1 }), {})
+    Interceptor.pipeline(icpt, Promise.resolve({ a: 1 }), {})
   ).resolves.toMatchObject({ a: 2 }); // 1 * 2
 
   icpt.use(addOne);
   await expect(
-    Interceptor.wrap(icpt, Promise.resolve({ a: 1 }), {})
+    Interceptor.pipeline(icpt, Promise.resolve({ a: 1 }), {})
   ).resolves.toMatchObject({ a: 3 }); // 1 * 2 + 1
 
   icpt.eject(addOne);
@@ -41,20 +41,20 @@ test("basic", async () => {
   const catchAndAddOne = (e: unknown) => addOne(e as A);
   icpt.use(null, catchAndAddOne);
   await expect(
-    Interceptor.wrap(icpt, Promise.resolve({ a: 1 }), {})
+    Interceptor.pipeline(icpt, Promise.resolve({ a: 1 }), {})
   ).resolves.toMatchObject({ a: 1 }); // Nothing to do
   await expect(
-    Interceptor.wrap(icpt, Promise.reject({ a: 1 }), {})
+    Interceptor.pipeline(icpt, Promise.reject({ a: 1 }), {})
   ).resolves.toMatchObject({ a: 2 }); // change "reject" to "resolve", 1 + 1
 
   icpt.eject(null, catchAndAddOne);
   await expect(
-    Interceptor.wrap(icpt, Promise.reject({ a: 1 }), {})
+    Interceptor.pipeline(icpt, Promise.reject({ a: 1 }), {})
   ).rejects.toMatchObject({ a: 1 }); // Nothing to do
 
   icpt.use(null, throwHehe);
   await expect(
-    Interceptor.wrap(icpt, Promise.reject({ a: 1 }), {})
+    Interceptor.pipeline(icpt, Promise.reject({ a: 1 }), {})
   ).rejects.toMatchObject(hehe);
 
   icpt.use(
@@ -69,15 +69,15 @@ test("basic", async () => {
     }
   );
   await expect(
-    Interceptor.wrap(icpt, Promise.reject({ a: 1 }), {})
+    Interceptor.pipeline(icpt, Promise.reject({ a: 1 }), {})
   ).rejects.toMatchObject(haha);
 
   icpt.eject(null, throwHehe);
   await expect(
-    Interceptor.wrap(icpt, Promise.reject({ a: 3 }), {})
+    Interceptor.pipeline(icpt, Promise.reject({ a: 3 }), {})
   ).resolves.toMatchObject({ a: 9 });
   await expect(
-    Interceptor.wrap(icpt, Promise.resolve({ a: 3 }), {})
+    Interceptor.pipeline(icpt, Promise.resolve({ a: 3 }), {})
   ).resolves.toMatchObject({ a: 15 });
 });
 
@@ -90,7 +90,7 @@ test("partial change", async () => {
   const addOne = ({ a }: A) => ({ a: a + 1 });
   icipt.use(addOne);
   await expect(
-    Interceptor.wrap(icipt, Promise.resolve({ a: 3, b: 9 }), {})
+    Interceptor.pipeline(icipt, Promise.resolve({ a: 3, b: 9 }), {})
   ).resolves.toMatchObject({ a: 4, b: 9 });
 });
 
@@ -104,7 +104,7 @@ test("void", async () => {
     /* noop */
   });
   await expect(
-    Interceptor.wrap(icpt, Promise.resolve({ a: 3, b: 9 }), {})
+    Interceptor.pipeline(icpt, Promise.resolve({ a: 3, b: 9 }), {})
   ).resolves.toMatchObject({ a: 3, b: 9 });
 });
 
@@ -121,7 +121,7 @@ test("reassign param", async () => {
   });
   const src = { a: 3, b: 9 };
   await expect(
-    Interceptor.wrap(icpt, Promise.resolve(src), {})
+    Interceptor.pipeline(icpt, Promise.resolve(src), {})
   ).resolves.toMatchObject({
     a: 4,
     b: 10,

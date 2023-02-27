@@ -1,4 +1,5 @@
-import { request, interceptors, InvokeContext } from "..";
+import { request, interceptors } from "..";
+import { InvokeContext } from "../types/InvokeContext";
 import { InvokeParams } from "../types/InvokeParams";
 import { InvokeResult } from "../types/InvokeResult";
 import "./libs/mock-xhr";

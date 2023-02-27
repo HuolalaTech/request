@@ -27,6 +27,8 @@ export const requestWithXhr = <T>({
           const hd = parseRawHeaderAsMap(xhr.getAllResponseHeaders());
           let res: unknown = responseText;
           const ct = hd["content-type"];
+          // NOTE: A void method of Spring Framework responds with an emtpy content in application/json.
+          // Do not parse it as a JSON if the responseText is emtpy.
           if ((!ct || isApplicationJson(ct)) && responseText) {
             res = JSON.parse(responseText);
           }
@@ -46,6 +48,8 @@ export const requestWithXhr = <T>({
     xhr.withCredentials = true;
 
     if (timeout) xhr.timeout = timeout;
+
+    // Copy the provided headers to the XHR object and save the Content-Type to variable which is useful below.
     let contentType;
     if (headers) {
       Object.keys(headers).forEach((key) => {
@@ -55,6 +59,7 @@ export const requestWithXhr = <T>({
     }
 
     const fileKeys = Object.keys(files);
+    // If file list is not empty, construct the data as a FormData object and send it with multipart/form-data.
     if (fileKeys.length) {
       if (contentType && !isMultipartFormData(contentType))
         throw new Error(`files cannot upload with content-type ${contentType}`);
@@ -62,10 +67,13 @@ export const requestWithXhr = <T>({
       fileKeys.forEach((key) => fd.append(key, files[key]));
       xhr.send(fd);
     } else if (data) {
+      // If the content type is not provided, use the application/json as the default.
       if (!contentType) {
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.send(JSON.stringify(data));
-      } else if (isWwwFormData(contentType)) {
+      }
+      // Serialize the data according to the specified Content-Type.
+      else if (isWwwFormData(contentType)) {
         xhr.send(buildQs(data));
       } else if (isMultipartFormData(contentType)) {
         xhr.send(buildFormData(data));
