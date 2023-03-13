@@ -1,14 +1,21 @@
 import { InvokeResult } from "./types/InvokeResult";
 import { InvokeParams } from "./types/InvokeParams";
 import { Wx } from "./types/libs";
-import { BatchUploadError } from "./errors";
+import { BatchUploadError, MiniProgramError } from "./errors";
 
 declare const wx: Wx;
 
 export const requestWithWx = <T>(args: InvokeParams) =>
-  new Promise<InvokeResult<T>>((success, fail) => {
+  new Promise<InvokeResult<T>>((success, reject) => {
     const { headers, files, data, ...rest } = args;
     const fileNames = files ? Object.keys(files) : [];
+    const fail = (obj: unknown) => {
+      /**
+       * @see https://developers.weixin.qq.com/miniprogram/dev/api/network/request/wx.request.html#Object-err
+       */
+      const { errno, errMsg } = Object(obj);
+      reject(new MiniProgramError(errno, errMsg));
+    };
     if (fileNames.length === 0) {
       /**
        * @see https://developers.weixin.qq.com/miniprogram/dev/api/network/request/wx.request.html

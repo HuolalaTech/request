@@ -1,15 +1,19 @@
 import { InvokeResult } from "./types/InvokeResult";
 import { InvokeParams } from "./types/InvokeParams";
 import type { Wx } from "./types/libs";
-import { BatchUploadError } from "./errors";
+import { BatchUploadError, MiniProgramError } from "./errors";
 
 declare const swan: Wx;
 
 export const requestWithSwan = <T>(args: InvokeParams) =>
-  new Promise<InvokeResult<T>>((success, fail) => {
+  new Promise<InvokeResult<T>>((success, reject) => {
     const { headers, files, data, ...rest } = args;
     const fileNames = files ? Object.keys(files) : [];
-
+    const fail = (obj: unknown) => {
+      // Perhaps the official is joking with us, so important information actually no documentation :joy:.
+      const { errCode, errMsg } = Object(obj);
+      reject(new MiniProgramError(errCode, errMsg));
+    };
     if (fileNames.length === 0) {
       /**
        * @see https://smartprogram.baidu.com/docs/develop/api/net/request/
