@@ -1,4 +1,4 @@
-import { HttpError } from "./HttpError";
+import { HttpError } from "./errors";
 import { InvokeResult } from "./types/InvokeResult";
 import { InvokeParams } from "./types/InvokeParams";
 import { isWwwFormData } from "./utils/isWwwFormData";

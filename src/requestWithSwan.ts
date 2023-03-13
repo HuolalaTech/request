@@ -1,6 +1,7 @@
 import { InvokeResult } from "./types/InvokeResult";
 import { InvokeParams } from "./types/InvokeParams";
 import type { Wx } from "./types/libs";
+import { BatchUploadError } from "./errors";
 
 declare const swan: Wx;
 
@@ -38,10 +39,6 @@ export const requestWithSwan = <T>(args: InvokeParams) =>
         fail,
       });
     } else {
-      fail(
-        new TypeError(
-          "The Miniprogram does not support uploading multiple files in once"
-        )
-      );
+      fail(new BatchUploadError());
     }
   });

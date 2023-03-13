@@ -1,3 +1,4 @@
+import { PlatformError } from "./errors";
 import { requestWithMy } from "./requestWithMy";
 import { requestWithSwan } from "./requestWithSwan";
 import { requestWithWx } from "./requestWithWx";
@@ -21,7 +22,7 @@ export const internalRequest = <T>(args: InvokeParams) => {
     case typeof swan === "object":
       return requestWithSwan<T>(args);
     default: {
-      throw new TypeError("Invalid platform");
+      throw new PlatformError();
     }
   }
 };
