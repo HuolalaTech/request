@@ -1,12 +1,11 @@
 import { HttpError } from "./HttpError";
 import { InvokeResult } from "./types/InvokeResult";
 import { InvokeParams } from "./types/InvokeParams";
-import { parseRawHeaderAsMap } from "./utils/parseRawHeaderAsMap";
 import { isWwwFormData } from "./utils/isWwwFormData";
 import { buildFormData } from "./utils/buildFormData";
 import { buildQs } from "./utils/buildQs";
 import { isMultipartFormData } from "./utils/isMultipartFormData";
-import { isApplicationJson } from "./utils/isApplicationJson";
+import { XhrInvokeResult } from "./XhrInvokeResult";
 
 export const requestWithXhr = <T>({
   method,
@@ -21,18 +20,10 @@ export const requestWithXhr = <T>({
 
     xhr.addEventListener("readystatechange", () => {
       if (xhr.readyState < 4) return;
-      const { status, responseText } = xhr;
+      const { status } = xhr;
       try {
         if (status >= 200 && status < 300) {
-          const hd = parseRawHeaderAsMap(xhr.getAllResponseHeaders());
-          let res: unknown = responseText;
-          const ct = hd["content-type"];
-          // NOTE: A void method of Spring Framework responds with an emtpy content in application/json.
-          // Do not parse it as a JSON if the responseText is emtpy.
-          if ((!ct || isApplicationJson(ct)) && responseText) {
-            res = JSON.parse(responseText);
-          }
-          resolve({ statusCode: status, headers: hd, data: res as T });
+          resolve(new XhrInvokeResult<T>(xhr));
         } else {
           reject(new HttpError(status));
         }
