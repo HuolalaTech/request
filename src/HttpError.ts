@@ -7,7 +7,7 @@ export class HttpError extends CustomError {
   readonly status;
   constructor(status: number) {
     super(status ? `HTTP status ${status}` : "Failed to fetch");
-    this.name = "HttpException";
+    this.name = "HttpError";
     this.status = status;
   }
 }

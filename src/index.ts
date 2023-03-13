@@ -4,6 +4,8 @@ import { Interceptor } from "./Interceptor";
 import type { InvokeParams } from "./types/InvokeParams";
 import type { InvokeResult } from "./types/InvokeResult";
 
+export { HttpError } from "./HttpError";
+
 export { InvokeContext, InvokeParams, InvokeResult };
 
 // Export the interceptore pairs definitions.
