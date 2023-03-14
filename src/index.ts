@@ -42,10 +42,15 @@ const globalThis =
     ? global
     : null;
 if (globalThis) {
-  const key = "@huolala-tech/request";
+  // This key is the MD5 hash of the package name.
+  const key = "54f09acea52941258aca926266ecf866";
   if (key in globalThis) {
-    // Log an error if this key was set in the global object.
-    console.error(`${key} was installed duplicately with different versions.`);
+    // Throw an error if this key was set in the global object.
+    setTimeout(() => {
+      throw new Error(
+        `The "request" lib was installed duplicately with different versions.`
+      );
+    });
   } else {
     // Set the key to the global object.
     Object.defineProperty(globalThis, key, {
