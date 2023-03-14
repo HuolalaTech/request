@@ -1,12 +1,12 @@
-import "./libs/mock-xhr";
-import "./libs/mock-wx";
-import "./libs/mock-my";
-import "./libs/mock-swan";
-
 import { requestWithXhr } from "../requestWithXhr";
 import { requestWithWx } from "../requestWithWx";
 import { requestWithMy } from "../requestWithMy";
 import { requestWithSwan } from "../requestWithSwan";
+
+import "./libs/mock-xhr";
+import "./libs/mock-wx";
+import "./libs/mock-my";
+import "./libs/mock-swan";
 
 describe("all libs tests", () => {
   for (const [name, request] of [
@@ -50,7 +50,7 @@ describe("all libs tests", () => {
     });
 
     test(`[${name}] files`, async () => {
-      const f1 = new File([], "a");
+      const f1 = new Blob(["abc"], { type: "text/plain" });
       const res = await request({
         method: "POST",
         url: "/test",
@@ -62,7 +62,7 @@ describe("all libs tests", () => {
           method: "POST",
           url: "/test",
           data: { a: "1", b: "2" },
-          files: { f1 },
+          files: { f1: "data:text/plain;base64,YWJj" },
         },
         headers: { server: "mock" },
         statusCode: 200,

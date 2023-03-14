@@ -1,26 +1,5 @@
 import { EventEmitter } from "events";
-
-global.FormData = class {
-  readonly entries: [string, unknown][] = [];
-  forEach(fn: (v: unknown, k: string) => void) {
-    this.entries.forEach(([key, value]) => fn(value, key));
-  }
-  append(key: string, value: unknown) {
-    this.entries.push([key, value]);
-  }
-  toJSON() {
-    return Object.fromEntries(this.entries);
-  }
-} as unknown as typeof FormData;
-
-global.File = class {
-  readonly name;
-  readonly data;
-  constructor(fileBits: BlobPart[], fileName: string) {
-    this.data = fileBits;
-    this.name = fileName;
-  }
-} as unknown as typeof File;
+import { readAsDataURL } from "./readAsDataURL";
 
 global.XMLHttpRequest = class {
   em = new EventEmitter();
@@ -33,19 +12,20 @@ global.XMLHttpRequest = class {
     this.openArgs = args;
     this.readyState = 1;
   }
-  send(body: string | FormData) {
-    const files: Record<string, File> = {};
+  async send(body: string | FormData) {
+    const files: Record<string, string> = {};
     let data: Record<string, unknown> = {};
     if (typeof body === "string") {
       data = JSON.parse(body);
     } else if (body instanceof FormData) {
-      body.forEach((v, k) => {
+      const tasks = Array.from(body, async ([k, v]) => {
         if (v instanceof File) {
-          files[k] = v;
+          files[k] = await readAsDataURL(v);
         } else {
           data[k] = v;
         }
       });
+      await Promise.all(tasks);
     }
     const { openArgs, headers } = this;
     setTimeout(() => {

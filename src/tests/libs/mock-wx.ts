@@ -1,4 +1,5 @@
 import type { Wx, WxReq1, WxReq2 } from "../../types/libs";
+import { readAsDataURL } from "./readAsDataURL";
 
 class WxConstructor implements Wx {
   request(req: WxReq1) {
@@ -13,7 +14,7 @@ class WxConstructor implements Wx {
   }
   uploadFile(req: WxReq2) {
     const { header, name, filePath, formData, ...rest } = req;
-    setTimeout(() => {
+    setTimeout(async () => {
       req.success({
         statusCode: 200,
         header: { server: "mock" },
@@ -21,7 +22,7 @@ class WxConstructor implements Wx {
           ...rest,
           data: formData,
           headers: header,
-          files: { [name]: filePath },
+          files: { [name]: await readAsDataURL(filePath) },
         },
       });
     });
