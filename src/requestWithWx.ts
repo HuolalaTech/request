@@ -28,9 +28,9 @@ export const requestWithWx = <T>(args: InvokeParams) =>
           success({ ...rest, headers: header, data: data as T }),
         fail,
       });
-    } else if (fileNames.length === 1) {
+    } else if (files && fileNames.length === 1) {
       const name = fileNames[0];
-      const filePath = files?.[name];
+      const filePath = files[name];
       /**
        * @see https://developers.weixin.qq.com/miniprogram/dev/api/network/upload/wx.uploadFile.html
        */
@@ -45,6 +45,6 @@ export const requestWithWx = <T>(args: InvokeParams) =>
         fail,
       });
     } else {
-      fail(new BatchUploadError());
+      reject(new BatchUploadError());
     }
   });

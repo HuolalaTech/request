@@ -39,7 +39,7 @@ test("basic", async () => {
   icpt.eject(addOne);
   icpt.eject(mulTwo);
   const catchAndAddOne = (e: unknown) => addOne(e as A);
-  icpt.use(null, catchAndAddOne);
+  icpt.use(undefined, catchAndAddOne);
   await expect(
     Interceptor.pipeline(icpt, Promise.resolve({ a: 1 }), {})
   ).resolves.toMatchObject({ a: 1 }); // Nothing to do
@@ -47,7 +47,7 @@ test("basic", async () => {
     Interceptor.pipeline(icpt, Promise.reject({ a: 1 }), {})
   ).resolves.toMatchObject({ a: 2 }); // change "reject" to "resolve", 1 + 1
 
-  icpt.eject(null, catchAndAddOne);
+  icpt.eject(undefined, catchAndAddOne);
   await expect(
     Interceptor.pipeline(icpt, Promise.reject({ a: 1 }), {})
   ).rejects.toMatchObject({ a: 1 }); // Nothing to do
@@ -128,4 +128,15 @@ test("reassign param", async () => {
   });
   // src must not be changed.
   await expect(Promise.resolve(src)).resolves.toMatchObject({ a: 3, b: 9 });
+});
+
+test("return value of eject", async () => {
+  interface A {
+    a: number;
+  }
+  const icpt = new Interceptor<A, Record<string, never>>();
+  const addOne = ({ a }: A) => ({ a: a + 1 });
+  icpt.use(addOne);
+  expect(icpt.eject(addOne)).toBeTruthy();
+  expect(icpt.eject(addOne)).toBeFalsy();
 });

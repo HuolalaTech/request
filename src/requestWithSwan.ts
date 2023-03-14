@@ -26,9 +26,9 @@ export const requestWithSwan = <T>(args: InvokeParams) =>
           success({ data: data as T, headers: header, ...rest }),
         fail,
       });
-    } else if (fileNames.length === 1) {
+    } else if (files && fileNames.length === 1) {
       const name = fileNames[0];
-      const filePath = files?.[name];
+      const filePath = files[name];
       /**
        * @see https://smartprogram.baidu.com/docs/develop/api/net/uploadfile/
        */
@@ -43,6 +43,6 @@ export const requestWithSwan = <T>(args: InvokeParams) =>
         fail,
       });
     } else {
-      fail(new BatchUploadError());
+      reject(new BatchUploadError());
     }
   });

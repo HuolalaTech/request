@@ -1,6 +1,7 @@
 import { toDataString } from "./toDataString";
 
 export const buildQs = (data: unknown) => {
+  if (data === null || typeof data !== "object") return "";
   const obj = Object(data);
   return Object.keys(obj)
     .map((key) =>

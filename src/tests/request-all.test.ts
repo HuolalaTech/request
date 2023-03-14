@@ -20,12 +20,14 @@ describe("all libs tests", () => {
         method: "GET",
         url: "/test",
         headers: { a: "1", b: "2" },
+        timeout: 100,
       });
       expect(res).toMatchObject({
         data: {
           method: "GET",
           url: "/test",
           headers: { a: "1", b: "2" },
+          timeout: 100,
         },
         headers: { server: "mock" },
         statusCode: 200,
@@ -66,6 +68,24 @@ describe("all libs tests", () => {
         },
         headers: { server: "mock" },
         statusCode: 200,
+      });
+    });
+
+    test(`[${name}] 500`, async () => {
+      const res = await request({
+        method: "GET",
+        url: "/test",
+        headers: {
+          "status-code": "500",
+        },
+      });
+      expect(res).toMatchObject({
+        data: {
+          method: "GET",
+          url: "/test",
+        },
+        headers: { server: "mock" },
+        statusCode: 500,
       });
     });
   }

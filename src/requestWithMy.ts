@@ -29,9 +29,9 @@ export const requestWithMy = <T>(args: InvokeParams) =>
         },
         fail,
       });
-    } else if (fileNames.length === 1) {
+    } else if (files && fileNames.length === 1) {
       const name = fileNames[0];
-      const filePath = files?.[name];
+      const filePath = files[name];
       /**
        * @see https://opendocs.alipay.com/mini/api/kmq4hc
        */
@@ -46,6 +46,6 @@ export const requestWithMy = <T>(args: InvokeParams) =>
         fail,
       });
     } else {
-      fail(new BatchUploadError());
+      reject(new BatchUploadError());
     }
   });

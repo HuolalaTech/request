@@ -1,4 +1,3 @@
-import { HttpError } from "./errors";
 import { InvokeResult } from "./types/InvokeResult";
 import { InvokeParams } from "./types/InvokeParams";
 import { isWwwFormData } from "./utils/isWwwFormData";
@@ -6,6 +5,7 @@ import { buildFormData } from "./utils/buildFormData";
 import { buildQs } from "./utils/buildQs";
 import { isMultipartFormData } from "./utils/isMultipartFormData";
 import { XhrInvokeResult } from "./XhrInvokeResult";
+import { ContentError } from "./errors";
 
 export const requestWithXhr = <T>({
   method,
@@ -20,13 +20,13 @@ export const requestWithXhr = <T>({
 
     xhr.addEventListener("readystatechange", () => {
       if (xhr.readyState < 4) return;
-      const { status } = xhr;
+      // const { status } = xhr;
       try {
-        if (status >= 200 && status < 300) {
-          resolve(new XhrInvokeResult<T>(xhr));
-        } else {
-          reject(new HttpError(status));
-        }
+        // if (status >= 200 && status < 300) {
+        resolve(new XhrInvokeResult<T>(xhr));
+        // } else {
+        // reject(new HttpError(status));
+        // }
       } catch (error) {
         reject(error);
       }
@@ -52,8 +52,9 @@ export const requestWithXhr = <T>({
     const fileKeys = Object.keys(files);
     // If file list is not empty, construct the data as a FormData object and send it with multipart/form-data.
     if (fileKeys.length) {
-      if (contentType && !isMultipartFormData(contentType))
-        throw new Error(`files cannot upload with content-type ${contentType}`);
+      if (contentType && !isMultipartFormData(contentType)) {
+        throw new ContentError(contentType);
+      }
       const fd = buildFormData(data);
       fileKeys.forEach((key) => fd.append(key, files[key]));
       xhr.send(fd);
