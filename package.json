@@ -1,6 +1,6 @@
 {
   "name": "@huolala-tech/request",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "This is just a request library to support browsers and MiniProgram platforms.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -10,6 +10,7 @@
     "start": "rollup -c --watch",
     "lint": "eslint src",
     "format": "prettier src -w",
+    "prepublishOnly": "yarn build",
     "test": "jest"
   },
   "files": [

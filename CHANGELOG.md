@@ -1,3 +1,12 @@
+## 0.0.6
+
+- Update dependencies
+- Update test cases
+- Add MiniProgramError class
+- Optimize errors
+- Add XhrInvokeResult class
+- Export HttpError class
+
 ## 0.0.5
 
 - Fix request<T> generic type
