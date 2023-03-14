@@ -1,3 +1,8 @@
+## 0.0.7
+
+- Add test cases to achieve 100% coverage
+- Remove the package name from the string code
+
 ## 0.0.6
 
 - Update dependencies
