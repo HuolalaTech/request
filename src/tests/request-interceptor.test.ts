@@ -1,18 +1,18 @@
-import { request, interceptors } from "..";
-import { InvokeContext } from "../types/InvokeContext";
-import { InvokeParams } from "../types/InvokeParams";
-import { InvokeResult } from "../types/InvokeResult";
-import "./libs/mock-xhr";
+import { request, interceptors } from '..';
+import { InvokeContext } from '../types/InvokeContext';
+import { InvokeParams } from '../types/InvokeParams';
+import { InvokeResult } from '../types/InvokeResult';
+import './libs/mock-xhr';
 
 test(`request`, async () => {
   const addHeaderC = (args: InvokeParams) => {
-    args.headers = { ...Object(args.headers), a: "2", b: "3" };
+    args.headers = { ...Object(args.headers), a: '2', b: '3' };
   };
 
   const args = {
-    method: "GET",
-    url: "/test",
-    headers: { a: "1", b: "2" },
+    method: 'GET',
+    url: '/test',
+    headers: { a: '1', b: '2' },
   };
 
   interceptors.request.use(addHeaderC);
@@ -22,9 +22,9 @@ test(`request`, async () => {
   expect(res).toMatchObject({
     data: {
       ...args,
-      headers: { a: "2", b: "3" },
+      headers: { a: '2', b: '3' },
     },
-    headers: { server: "mock" },
+    headers: { server: 'mock' },
     statusCode: 200,
   });
 
@@ -33,9 +33,9 @@ test(`request`, async () => {
   expect(res2).toMatchObject({
     data: {
       ...args,
-      headers: { a: "1", b: "2" },
+      headers: { a: '1', b: '2' },
     },
-    headers: { server: "mock" },
+    headers: { server: 'mock' },
     statusCode: 200,
   });
 });
@@ -46,8 +46,8 @@ test(`response`, async () => {
   };
 
   const args = {
-    method: "GET",
-    url: "/test",
+    method: 'GET',
+    url: '/test',
   };
 
   interceptors.response.use(addHeaderC);
@@ -79,10 +79,10 @@ test(`request extension fields`, async () => {
   };
 
   const args = {
-    method: "GET",
-    url: "/test",
+    method: 'GET',
+    url: '/test',
   };
-  const wtfArgs = { wtf: "hehe", ...args };
+  const wtfArgs = { wtf: 'hehe', ...args };
 
   interceptors.request.use(addReqWtf);
   interceptors.response.use(addResWtf);
@@ -93,9 +93,9 @@ test(`request extension fields`, async () => {
   expect(res).toMatchObject({
     data: {
       ...args,
-      headers: { wtf: "hehe" },
+      headers: { wtf: 'hehe' },
     },
-    headers: { server: "mock", wtf: "hehe" },
+    headers: { server: 'mock', wtf: 'hehe' },
     statusCode: 200,
   });
 });

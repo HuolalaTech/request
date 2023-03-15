@@ -1,5 +1,5 @@
-import type { Swan, WxReq1, WxReq2 } from "../../types/libs";
-import { readAsDataURL } from "./readAsDataURL";
+import type { Swan, WxReq1, WxReq2 } from '../../types/libs';
+import { readAsDataURL } from './readAsDataURL';
 
 class SwanConstructor implements Swan {
   async request(req: WxReq1) {
@@ -13,8 +13,8 @@ class SwanConstructor implements Swan {
 
     await Promise.resolve();
     req.success({
-      statusCode: Number(Object(header)["status-code"]) || 200,
-      header: { server: "mock" },
+      statusCode: Number(Object(header)['status-code']) || 200,
+      header: { server: 'mock' },
       data: { ...rest, headers: header },
     });
   }
@@ -22,8 +22,8 @@ class SwanConstructor implements Swan {
     const { header, name, filePath, formData, ...rest } = req;
     setTimeout(async () => {
       req.success({
-        statusCode: Number(Object(header)["status-code"]) || 200,
-        header: { server: "mock" },
+        statusCode: Number(Object(header)['status-code']) || 200,
+        header: { server: 'mock' },
         data: {
           ...rest,
           data: formData,
@@ -35,4 +35,4 @@ class SwanConstructor implements Swan {
   }
 }
 
-Object.defineProperty(global, "swan", { value: new SwanConstructor() });
+Object.defineProperty(global, 'swan', { value: new SwanConstructor() });

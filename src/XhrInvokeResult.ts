@@ -1,6 +1,6 @@
-import { InvokeResult } from "./types/InvokeResult";
-import { parseRawHeaderAsMap } from "./utils/parseRawHeaderAsMap";
-import { isApplicationJson } from "./utils/isApplicationJson";
+import { InvokeResult } from './types/InvokeResult';
+import { parseRawHeaderAsMap } from './utils/parseRawHeaderAsMap';
+import { isApplicationJson } from './utils/isApplicationJson';
 
 export class XhrInvokeResult<T> implements InvokeResult<T> {
   public statusCode: number;
@@ -19,7 +19,7 @@ export class XhrInvokeResult<T> implements InvokeResult<T> {
         get: () => {
           const value = parseRawHeaderAsMap(xhr.getAllResponseHeaders());
           // This getter will be called only once, and the result will be cached in the property value.
-          Object.defineProperty(this, "headers", {
+          Object.defineProperty(this, 'headers', {
             configurable: true,
             enumerable: true,
             writable: true,
@@ -31,7 +31,7 @@ export class XhrInvokeResult<T> implements InvokeResult<T> {
         // QUESTION: Why is it writable?
         // ANSWER: The InvokeResult<T> may be used in an interceptor, so users may need to modify certain properties.
         set: (value) => {
-          Object.defineProperty(this, "headers", {
+          Object.defineProperty(this, 'headers', {
             configurable: true,
             enumerable: true,
             writable: true,
@@ -43,7 +43,7 @@ export class XhrInvokeResult<T> implements InvokeResult<T> {
     const { status, responseText } = xhr;
     this.statusCode = status;
     let res: unknown = responseText;
-    const ct = xhr.getResponseHeader("Content-Type");
+    const ct = xhr.getResponseHeader('Content-Type');
     // NOTE: A void method of Spring Framework responds with an emtpy content in application/json.
     // Do not parse it as a JSON if the responseText is emtpy.
     if ((!ct || isApplicationJson(ct)) && responseText) {

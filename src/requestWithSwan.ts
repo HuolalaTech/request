@@ -1,7 +1,7 @@
-import { InvokeResult } from "./types/InvokeResult";
-import { InvokeParams } from "./types/InvokeParams";
-import type { Wx } from "./types/libs";
-import { BatchUploadError, MiniProgramError } from "./errors";
+import { InvokeResult } from './types/InvokeResult';
+import { InvokeParams } from './types/InvokeParams';
+import type { Wx } from './types/libs';
+import { BatchUploadError, MiniProgramError } from './errors';
 
 declare const swan: Wx;
 
@@ -22,8 +22,7 @@ export const requestWithSwan = <T>(args: InvokeParams) =>
         header: headers,
         data,
         ...rest,
-        success: ({ header, data, ...rest }) =>
-          success({ data: data as T, headers: header, ...rest }),
+        success: ({ header, data, ...rest }) => success({ data: data as T, headers: header, ...rest }),
         fail,
       });
     } else if (files && fileNames.length === 1) {
@@ -38,8 +37,7 @@ export const requestWithSwan = <T>(args: InvokeParams) =>
         name,
         filePath,
         ...rest,
-        success: ({ header, data, ...rest }) =>
-          success({ headers: header, data: data as T, ...rest }),
+        success: ({ header, data, ...rest }) => success({ headers: header, data: data as T, ...rest }),
         fail,
       });
     } else {

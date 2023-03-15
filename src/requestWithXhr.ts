@@ -1,24 +1,17 @@
-import { InvokeResult } from "./types/InvokeResult";
-import { InvokeParams } from "./types/InvokeParams";
-import { isWwwFormData } from "./utils/isWwwFormData";
-import { buildFormData } from "./utils/buildFormData";
-import { buildQs } from "./utils/buildQs";
-import { isMultipartFormData } from "./utils/isMultipartFormData";
-import { XhrInvokeResult } from "./XhrInvokeResult";
-import { ContentError } from "./errors";
+import { InvokeResult } from './types/InvokeResult';
+import { InvokeParams } from './types/InvokeParams';
+import { isWwwFormData } from './utils/isWwwFormData';
+import { buildFormData } from './utils/buildFormData';
+import { buildQs } from './utils/buildQs';
+import { isMultipartFormData } from './utils/isMultipartFormData';
+import { XhrInvokeResult } from './XhrInvokeResult';
+import { ContentError } from './errors';
 
-export const requestWithXhr = <T>({
-  method,
-  url,
-  data,
-  timeout,
-  headers,
-  files = {},
-}: InvokeParams) => {
+export const requestWithXhr = <T>({ method, url, data, timeout, headers, files = {} }: InvokeParams) => {
   return new Promise<InvokeResult<T>>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
 
-    xhr.addEventListener("readystatechange", () => {
+    xhr.addEventListener('readystatechange', () => {
       if (xhr.readyState < 4) return;
       // const { status } = xhr;
       try {
@@ -32,7 +25,7 @@ export const requestWithXhr = <T>({
       }
     });
 
-    xhr.addEventListener("error", reject);
+    xhr.addEventListener('error', reject);
 
     xhr.open(method, url, true);
 
@@ -61,7 +54,7 @@ export const requestWithXhr = <T>({
     } else if (data) {
       // If the content type is not provided, use the application/json as the default.
       if (!contentType) {
-        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify(data));
       }
       // Serialize the data according to the specified Content-Type.

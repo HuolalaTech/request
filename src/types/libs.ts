@@ -1,5 +1,5 @@
-export type FixMy<T extends { header?: Header }> = Omit<T, "header"> & {
-  headers: T["header"];
+export type FixMy<T extends { header?: Header }> = Omit<T, 'header'> & {
+  headers: T['header'];
 };
 
 export type Header = Record<string, string>;

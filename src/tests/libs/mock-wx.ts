@@ -1,5 +1,5 @@
-import type { Wx, WxReq1, WxReq2 } from "../../types/libs";
-import { readAsDataURL } from "./readAsDataURL";
+import type { Wx, WxReq1, WxReq2 } from '../../types/libs';
+import { readAsDataURL } from './readAsDataURL';
 
 class WxConstructor implements Wx {
   async request(req: WxReq1) {
@@ -13,8 +13,8 @@ class WxConstructor implements Wx {
 
     await Promise.resolve();
     req.success({
-      statusCode: Number(Object(header)["status-code"]) || 200,
-      header: { server: "mock" },
+      statusCode: Number(Object(header)['status-code']) || 200,
+      header: { server: 'mock' },
       data: { ...rest, headers: header },
     });
   }
@@ -22,8 +22,8 @@ class WxConstructor implements Wx {
     const { header, name, filePath, formData, ...rest } = req;
     setTimeout(async () => {
       req.success({
-        statusCode: Number(Object(header)["status-code"]) || 200,
-        header: { server: "mock" },
+        statusCode: Number(Object(header)['status-code']) || 200,
+        header: { server: 'mock' },
         data: {
           ...rest,
           data: formData,
@@ -35,4 +35,4 @@ class WxConstructor implements Wx {
   }
 }
 
-Object.defineProperty(global, "wx", { value: new WxConstructor() });
+Object.defineProperty(global, 'wx', { value: new WxConstructor() });

@@ -1,5 +1,5 @@
-import type { My, MyReq1, WxReq2 } from "../../types/libs";
-import { readAsDataURL } from "./readAsDataURL";
+import type { My, MyReq1, WxReq2 } from '../../types/libs';
+import { readAsDataURL } from './readAsDataURL';
 
 class MyConstructor implements My {
   async request(req: MyReq1) {
@@ -13,8 +13,8 @@ class MyConstructor implements My {
 
     await Promise.resolve();
     req.success({
-      statusCode: Number(Object(headers)["status-code"]) || 200,
-      headers: { server: "mock" },
+      statusCode: Number(Object(headers)['status-code']) || 200,
+      headers: { server: 'mock' },
       data: { ...rest, headers },
     });
   }
@@ -22,8 +22,8 @@ class MyConstructor implements My {
     const { header, name, filePath, formData, ...rest } = req;
     setTimeout(async () => {
       req.success({
-        statusCode: Number(Object(header)["status-code"]) || 200,
-        header: { server: "mock" },
+        statusCode: Number(Object(header)['status-code']) || 200,
+        header: { server: 'mock' },
         data: {
           ...rest,
           data: formData,
@@ -35,4 +35,4 @@ class MyConstructor implements My {
   }
 }
 
-Object.defineProperty(global, "my", { value: new MyConstructor() });
+Object.defineProperty(global, 'my', { value: new MyConstructor() });

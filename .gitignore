@@ -4,5 +4,7 @@ coverage
 .*
 !.gitignore
 !.eslintrc.js
-!.npmrc!.prettierignore
+!.npmrc
 !.husky
+!.prettierignore
+!.prettierrc

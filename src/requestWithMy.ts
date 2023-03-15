@@ -1,7 +1,7 @@
-import { InvokeResult } from "./types/InvokeResult";
-import { InvokeParams } from "./types/InvokeParams";
-import { My } from "./types/libs";
-import { BatchUploadError, MiniProgramError } from "./errors";
+import { InvokeResult } from './types/InvokeResult';
+import { InvokeParams } from './types/InvokeParams';
+import { My } from './types/libs';
+import { BatchUploadError, MiniProgramError } from './errors';
 
 declare const my: My;
 
@@ -41,8 +41,7 @@ export const requestWithMy = <T>(args: InvokeParams) =>
         name,
         filePath,
         ...rest,
-        success: ({ header, data, ...rest }) =>
-          success({ headers: header, data: data as T, ...rest }),
+        success: ({ header, data, ...rest }) => success({ headers: header, data: data as T, ...rest }),
         fail,
       });
     } else {

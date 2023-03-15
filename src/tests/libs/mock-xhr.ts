@@ -1,5 +1,5 @@
-import { EventEmitter } from "events";
-import { readAsDataURL } from "./readAsDataURL";
+import { EventEmitter } from 'events';
+import { readAsDataURL } from './readAsDataURL';
 
 global.XMLHttpRequest = class {
   private em = new EventEmitter();
@@ -8,30 +8,30 @@ global.XMLHttpRequest = class {
   public readyState = 0;
   public status = 0;
   public timeout?: number;
-  public responseText = "";
+  public responseText = '';
   open(...args: unknown[]) {
     this.openArgs = args;
     this.readyState = 1;
-    this.em.emit("readystatechange");
+    this.em.emit('readystatechange');
   }
   async send(body: string | FormData) {
     const { openArgs, headers } = this;
     this.readyState = 3;
-    this.status = Number(Object(headers)["status-code"]) || 200;
-    this.em.emit("readystatechange");
+    this.status = Number(Object(headers)['status-code']) || 200;
+    this.em.emit('readystatechange');
 
-    const mockResponse = Object(headers)["response-body"];
+    const mockResponse = Object(headers)['response-body'];
     if (mockResponse) {
       this.readyState = 4;
       this.responseText = mockResponse;
-      this.em.emit("readystatechange");
+      this.em.emit('readystatechange');
       return;
     }
 
     await Promise.resolve();
     const files: Record<string, string> = {};
     let data: Record<string, unknown> | string | undefined;
-    if (typeof body === "string") {
+    if (typeof body === 'string') {
       try {
         data = JSON.parse(body);
       } catch (error) {
@@ -59,7 +59,7 @@ global.XMLHttpRequest = class {
       data,
       files,
     });
-    this.em.emit("readystatechange");
+    this.em.emit('readystatechange');
   }
   addEventListener(e: string, h: () => void) {
     this.em.addListener(e, h);
@@ -68,10 +68,10 @@ global.XMLHttpRequest = class {
     this.headers[key] = value;
   }
   getResponseHeader(key: string) {
-    if (key === "Content-Type") return "application/json";
+    if (key === 'Content-Type') return 'application/json';
     return null;
   }
   getAllResponseHeaders() {
-    return "server: mock\r\n";
+    return 'server: mock\r\n';
   }
 } as unknown as typeof XMLHttpRequest;

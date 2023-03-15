@@ -1,32 +1,22 @@
 export type MayBeNull<T> = T | null;
 
-export type ResolveHandler<T, C> = MayBeNull<
-  (current: T & C) => void | Partial<T> | PromiseLike<Partial<T>>
->;
+export type ResolveHandler<T, C> = MayBeNull<(current: T & C) => void | Partial<T> | PromiseLike<Partial<T>>>;
 
-export type RejectHandler<T, C> = MayBeNull<
-  (error: unknown & C) => T | PromiseLike<T>
->;
+export type RejectHandler<T, C> = MayBeNull<(error: unknown & C) => T | PromiseLike<T>>;
 
 export class Interceptor<T, C = unknown> {
   private handlers = [] as [ResolveHandler<T, C>, RejectHandler<T, C>][];
   /**
    * Add an interceptor pairs.
    */
-  use(
-    onfulfilled: ResolveHandler<T, C> = null,
-    onrejected: RejectHandler<T, C> = null
-  ) {
+  use(onfulfilled: ResolveHandler<T, C> = null, onrejected: RejectHandler<T, C> = null) {
     this.handlers.push([onfulfilled, onrejected]);
   }
 
   /**
    * Remove an interceptor pairs.
    */
-  eject(
-    onfulfilled: ResolveHandler<T, C> = null,
-    onrejected: RejectHandler<T, C> = null
-  ) {
+  eject(onfulfilled: ResolveHandler<T, C> = null, onrejected: RejectHandler<T, C> = null) {
     const { handlers } = this;
     // Locate specified handler pairs (strict matching) and remove them from the handlers array.
     for (let i = 0; i < handlers.length; i++) {
@@ -41,11 +31,7 @@ export class Interceptor<T, C = unknown> {
   /**
    * Execute an interceptor as a pipeline.
    */
-  static pipeline<R extends object, C>(
-    interceptor: Interceptor<R, C>,
-    task: Promise<R>,
-    context?: C
-  ) {
+  static pipeline<R extends object, C>(interceptor: Interceptor<R, C>, task: Promise<R>, context?: C) {
     // Reduce all handlers into a promise chains.
     const { handlers } = interceptor;
     let t = task;

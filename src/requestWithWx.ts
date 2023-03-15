@@ -1,7 +1,7 @@
-import { InvokeResult } from "./types/InvokeResult";
-import { InvokeParams } from "./types/InvokeParams";
-import { Wx } from "./types/libs";
-import { BatchUploadError, MiniProgramError } from "./errors";
+import { InvokeResult } from './types/InvokeResult';
+import { InvokeParams } from './types/InvokeParams';
+import { Wx } from './types/libs';
+import { BatchUploadError, MiniProgramError } from './errors';
 
 declare const wx: Wx;
 
@@ -24,8 +24,7 @@ export const requestWithWx = <T>(args: InvokeParams) =>
         header: headers,
         data,
         ...rest,
-        success: ({ header, data, ...rest }) =>
-          success({ ...rest, headers: header, data: data as T }),
+        success: ({ header, data, ...rest }) => success({ ...rest, headers: header, data: data as T }),
         fail,
       });
     } else if (files && fileNames.length === 1) {
@@ -40,8 +39,7 @@ export const requestWithWx = <T>(args: InvokeParams) =>
         name,
         filePath,
         ...rest,
-        success: ({ header, data, ...rest }) =>
-          success({ headers: header, data: data as T, ...rest }),
+        success: ({ header, data, ...rest }) => success({ headers: header, data: data as T, ...rest }),
         fail,
       });
     } else {
