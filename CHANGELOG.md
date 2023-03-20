@@ -1,3 +1,8 @@
+## 1.0.0
+
+- Update dependencies
+- Add .prettierrc
+
 ## 0.0.7
 
 - Add test cases to achieve 100% coverage
