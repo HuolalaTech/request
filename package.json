@@ -36,6 +36,6 @@
     "typescript": "^4.9.5"
   },
   "dependencies": {
-    "@huolala-tech/custom-error": "0.0.1"
+    "@huolala-tech/custom-error": "^1.0.0"
   }
 }
