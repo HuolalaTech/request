@@ -1,4 +1,4 @@
-# request · [![LICENSE](https://img.shields.io/npm/l/@huolala-tech/request)](LICENSE.txt)
+# request · [![LICENSE](https://img.shields.io/npm/l/@huolala-tech/request)](LICENSE.txt) [![codecov](https://codecov.io/gh/HuolalaTech/request/branch/main/graph/badge.svg?token=8Y5SCRGG7V)](https://codecov.io/gh/HuolalaTech/request)
 
 This is just a request library to support browsers and MiniProgram platforms.
 
