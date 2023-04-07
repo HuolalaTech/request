@@ -12,14 +12,9 @@ export const requestWithXhr = <T>({ method, url, data, timeout, headers, files =
     const xhr = new XMLHttpRequest();
 
     xhr.addEventListener('readystatechange', () => {
-      if (xhr.readyState < 4) return;
-      // const { status } = xhr;
+      if (xhr.readyState !== 4) return;
       try {
-        // if (status >= 200 && status < 300) {
         resolve(new XhrInvokeResult<T>(xhr));
-        // } else {
-        // reject(new HttpError(status));
-        // }
       } catch (error) {
         reject(error);
       }
