@@ -1,3 +1,15 @@
+## 1.0.1
+
+- Enhance MPO validator
+- Add test case for strange platform
+- Fix platforms detector and close #1
+- Fix multiplart/form-data boundary
+- Upgrade dependencies
+- Remove unused code
+- Add coverage badge
+- Update node.js.yml
+- Create node.js.yml
+
 ## 1.0.0
 
 - Update dependencies
