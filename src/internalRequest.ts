@@ -13,14 +13,22 @@ declare const swan: Swan;
 export const internalRequest = <T>(args: InvokeParams) => {
   // Detect the current platform and call the corresponding method.
   switch (true) {
+    // On some strange platforms, an XMLHttpRequest object may be provided, but not avaliable. Therefore, we have to
+    // detect the existence of document object to determine if it is a browser platform.
+    case typeof XMLHttpRequest === 'function' && typeof document === 'object' && document !== null:
+      return requestWithXhr<T>(args);
+
+    case typeof wx === 'object' && typeof wx.request === 'function':
+      return requestWithWx<T>(args);
+    case typeof my === 'object' && typeof my.request === 'function':
+      return requestWithMy<T>(args);
+    case typeof swan === 'object' && typeof swan.request === 'function':
+      return requestWithSwan<T>(args);
+
+    // If none of the MiniProgram platforms match, we can fallback to using an XMLHttpRequest if it exists.
     case typeof XMLHttpRequest === 'function':
       return requestWithXhr<T>(args);
-    case typeof wx === 'object':
-      return requestWithWx<T>(args);
-    case typeof my === 'object':
-      return requestWithMy<T>(args);
-    case typeof swan === 'object':
-      return requestWithSwan<T>(args);
+
     default: {
       throw new PlatformError();
     }
