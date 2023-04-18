@@ -1,5 +1,4 @@
 import { request } from '../..';
-import '../libs/mock-swan';
 
 Object.defineProperty(global, 'document', { configurable: true, value: null });
 
