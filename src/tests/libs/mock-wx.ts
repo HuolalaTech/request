@@ -1,7 +1,8 @@
 import type { Wx, WxReq1, WxReq2 } from '../../types/libs';
+import { BaseMPO } from './mock-base';
 import { readAsDataURL } from './readAsDataURL';
 
-class WxConstructor implements Wx {
+class WxConstructor extends BaseMPO implements Wx {
   async request(req: WxReq1) {
     const { header, ...rest } = req;
 

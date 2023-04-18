@@ -1,7 +1,8 @@
 import type { My, MyReq1, WxReq2 } from '../../types/libs';
+import { BaseMPO } from './mock-base';
 import { readAsDataURL } from './readAsDataURL';
 
-class MyConstructor implements My {
+class MyConstructor extends BaseMPO implements My {
   async request(req: MyReq1) {
     const { headers, ...rest } = req;
 

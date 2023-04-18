@@ -1,7 +1,8 @@
 import type { Swan, WxReq1, WxReq2 } from '../../types/libs';
+import { BaseMPO } from './mock-base';
 import { readAsDataURL } from './readAsDataURL';
 
-class SwanConstructor implements Swan {
+class SwanConstructor extends BaseMPO implements Swan {
   async request(req: WxReq1) {
     const { header, ...rest } = req;
 

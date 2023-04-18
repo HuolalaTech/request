@@ -1,4 +1,5 @@
 import { PlatformError } from './errors';
+import { isValidMPO } from './utils/isValidMPO';
 import { requestWithMy } from './requestWithMy';
 import { requestWithSwan } from './requestWithSwan';
 import { requestWithWx } from './requestWithWx';
@@ -18,11 +19,11 @@ export const internalRequest = <T>(args: InvokeParams) => {
     case typeof XMLHttpRequest === 'function' && typeof document === 'object' && document !== null:
       return requestWithXhr<T>(args);
 
-    case typeof wx === 'object' && typeof wx.request === 'function':
+    case typeof wx === 'object' && isValidMPO(wx):
       return requestWithWx<T>(args);
-    case typeof my === 'object' && typeof my.request === 'function':
+    case typeof my === 'object' && isValidMPO(my):
       return requestWithMy<T>(args);
-    case typeof swan === 'object' && typeof swan.request === 'function':
+    case typeof swan === 'object' && isValidMPO(swan):
       return requestWithSwan<T>(args);
 
     // If none of the MiniProgram platforms match, we can fallback to using an XMLHttpRequest if it exists.
