@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events';
 import { readAsDataURL } from './readAsDataURL';
+import { isContentType } from '../../utils/isContentType';
 
 global.XMLHttpRequest = class {
   private em = new EventEmitter();
@@ -38,6 +39,9 @@ global.XMLHttpRequest = class {
         data = body;
       }
     } else if (body instanceof FormData) {
+      if (!Object.keys(this.headers).some(isContentType)) {
+        this.headers['Content-Type'] = 'multipart/form-data; boundary=----WebKitFormBoundaryHehehehe';
+      }
       const temp: Record<string, unknown> = {};
       const tasks = Array.from(body, async ([k, v]) => {
         if (v instanceof File) {

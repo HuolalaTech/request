@@ -6,6 +6,7 @@ import { buildQs } from './utils/buildQs';
 import { isMultipartFormData } from './utils/isMultipartFormData';
 import { XhrInvokeResult } from './XhrInvokeResult';
 import { ContentError } from './errors';
+import { isContentType } from './utils/isContentType';
 
 export const requestWithXhr = <T>({ method, url, data, timeout, headers, files = {} }: InvokeParams) => {
   return new Promise<InvokeResult<T>>((resolve, reject) => {
@@ -28,12 +29,18 @@ export const requestWithXhr = <T>({ method, url, data, timeout, headers, files =
 
     if (timeout) xhr.timeout = timeout;
 
-    // Copy the provided headers to the XHR object and save the Content-Type to variable which is useful below.
-    let contentType;
+    // Copy the provided headers to the XHR object, except for Content-Type.
+    // Store the Content-Type in a variable that will be useful later.
+    let contentType: string | undefined;
     if (headers) {
       Object.keys(headers).forEach((key) => {
-        xhr.setRequestHeader(key, headers[key]);
-        if (/^Content-Type$/i.test(key)) contentType = headers[key];
+        // NOTE: A JavaScript object is case-sensitive. If the Content-Type header is provided multiple times
+        //       with different case, the latest value will be used.
+        if (isContentType(key)) {
+          contentType = headers[key];
+        } else {
+          xhr.setRequestHeader(key, headers[key]);
+        }
       });
     }
 
@@ -43,6 +50,8 @@ export const requestWithXhr = <T>({ method, url, data, timeout, headers, files =
       if (contentType && !isMultipartFormData(contentType)) {
         throw new ContentError(contentType);
       }
+      // The FormData provides the Content-Type with correct boundary value.
+      // Do not set the Content-Type explicitly, otherwise the boundary value may be lose.
       const fd = buildFormData(data);
       fileKeys.forEach((key) => fd.append(key, files[key]));
       xhr.send(fd);
@@ -54,10 +63,14 @@ export const requestWithXhr = <T>({ method, url, data, timeout, headers, files =
       }
       // Serialize the data according to the specified Content-Type.
       else if (isWwwFormData(contentType)) {
+        xhr.setRequestHeader('Content-Type', contentType);
         xhr.send(buildQs(data));
       } else if (isMultipartFormData(contentType)) {
+        // The FormData provides the Content-Type with correct boundary value.
+        // Do not set the Content-Type explicitly, otherwise the boundary value may be lose.
         xhr.send(buildFormData(data));
       } else {
+        xhr.setRequestHeader('Content-Type', contentType);
         xhr.send(JSON.stringify(data));
       }
     } else {

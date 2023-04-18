@@ -19,7 +19,7 @@ test(`[xhr] content error`, async () => {
     method: 'POST',
     url: '/test',
     headers: {
-      'content-type': 'application/json',
+      'Content-Type': 'application/json',
     },
     files: { f1: new Blob() },
   });
@@ -31,7 +31,7 @@ test(`[xhr] send with json`, async () => {
     method: 'POST',
     url: '/test',
     headers: {
-      'content-type': 'application/json',
+      'Content-Type': 'application/json',
     },
     data: { a: 1 },
   });
@@ -39,7 +39,7 @@ test(`[xhr] send with json`, async () => {
     data: {
       data: { a: 1 },
       files: {},
-      headers: { 'content-type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
       method: 'POST',
       url: '/test',
     },
@@ -53,7 +53,7 @@ test(`[xhr] send with form`, async () => {
     method: 'POST',
     url: '/test',
     headers: {
-      'content-type': 'application/x-www-form-urlencoded',
+      'Content-Type': 'application/x-www-form-urlencoded',
     },
     data: { a: 1 },
   });
@@ -61,7 +61,7 @@ test(`[xhr] send with form`, async () => {
     data: {
       data: 'a=1',
       files: {},
-      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       method: 'POST',
       url: '/test',
     },
@@ -75,7 +75,7 @@ test(`[xhr] send with multipart`, async () => {
     method: 'POST',
     url: '/test',
     headers: {
-      'content-type': 'multipart/form-data',
+      'Content-Type': 'multipart/form-data',
     },
     data: { a: 1 },
   });
@@ -83,7 +83,7 @@ test(`[xhr] send with multipart`, async () => {
     data: {
       data: { a: '1' },
       files: {},
-      headers: { 'content-type': 'multipart/form-data' },
+      headers: { 'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundaryHehehehe' },
       method: 'POST',
       url: '/test',
     },
