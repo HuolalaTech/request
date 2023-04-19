@@ -5,23 +5,27 @@ import { buildFormData } from './utils/buildFormData';
 import { buildQs } from './utils/buildQs';
 import { isMultipartFormData } from './utils/isMultipartFormData';
 import { XhrInvokeResult } from './XhrInvokeResult';
-import { ContentError } from './errors';
+import { ContentError, FailedToRequest } from './errors';
 import { isContentType } from './utils/isContentType';
 
 export const requestWithXhr = <T>({ method, url, data, timeout, headers, files = {} }: InvokeParams) => {
   return new Promise<InvokeResult<T>>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
 
-    xhr.addEventListener('readystatechange', () => {
-      if (xhr.readyState !== 4) return;
+    // The readyState 4 indicates that the XHR object is working completed,
+    // but just completed alone cannot ensure success.
+    // In fact, there are 4 possible end states: load, error, timeout, and abort.
+    const errorHandler = ({ type }: ProgressEvent) => reject(new FailedToRequest(type, xhr));
+    xhr.addEventListener('abort', errorHandler);
+    xhr.addEventListener('timeout', errorHandler);
+    xhr.addEventListener('error', errorHandler);
+    xhr.addEventListener('load', () => {
       try {
         resolve(new XhrInvokeResult<T>(xhr));
       } catch (error) {
         reject(error);
       }
     });
-
-    xhr.addEventListener('error', reject);
 
     xhr.open(method, url, true);
 

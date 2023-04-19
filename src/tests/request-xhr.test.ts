@@ -1,4 +1,4 @@
-import { ContentError } from '../errors';
+import { ContentError, FailedToRequest } from '../errors';
 import { requestWithXhr } from '../requestWithXhr';
 
 import './libs/mock-xhr';
@@ -90,4 +90,16 @@ test(`[xhr] send with multipart`, async () => {
     headers: { server: 'mock' },
     statusCode: 200,
   });
+});
+
+test(`[xhr] error`, async () => {
+  const res = requestWithXhr({
+    method: 'POST',
+    url: '/test',
+    headers: {
+      error: '1',
+    },
+    data: { a: 1 },
+  });
+  expect(res).rejects.toThrowError(FailedToRequest);
 });

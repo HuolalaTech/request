@@ -21,11 +21,20 @@ global.XMLHttpRequest = class {
     this.status = Number(Object(headers)['status-code']) || 200;
     this.em.emit('readystatechange');
 
+    const mockError = Object(headers)['error'];
+    if (mockError) {
+      this.readyState = 4;
+      this.em.emit('readystatechange');
+      this.em.emit('error', new ProgressEvent('error'));
+      return;
+    }
+
     const mockResponse = Object(headers)['response-body'];
     if (mockResponse) {
       this.readyState = 4;
       this.responseText = mockResponse;
       this.em.emit('readystatechange');
+      this.em.emit('load');
       return;
     }
 
@@ -54,7 +63,6 @@ global.XMLHttpRequest = class {
       data = temp;
     }
     await Promise.resolve();
-    this.readyState = 4;
     this.responseText = JSON.stringify({
       method: openArgs[0],
       url: openArgs[1],
@@ -63,7 +71,9 @@ global.XMLHttpRequest = class {
       data,
       files,
     });
+    this.readyState = 4;
     this.em.emit('readystatechange');
+    this.em.emit('load');
   }
   addEventListener(e: string, h: () => void) {
     this.em.addListener(e, h);
