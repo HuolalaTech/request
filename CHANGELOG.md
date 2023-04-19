@@ -1,3 +1,8 @@
+## 1.0.2
+
+- Update xhr-request test cases
+- Fix xhr-request not throwing on timeout
+
 ## 1.0.1
 
 - Enhance MPO validator
