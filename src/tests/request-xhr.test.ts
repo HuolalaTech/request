@@ -3,7 +3,7 @@ import { requestWithXhr } from '../requestWithXhr';
 
 import './libs/mock-xhr';
 
-test(`[xhr] bad json`, async () => {
+test(`bad json`, async () => {
   const res = requestWithXhr({
     method: 'GET',
     url: '/test',
@@ -14,7 +14,7 @@ test(`[xhr] bad json`, async () => {
   expect(res).rejects.toBeInstanceOf(SyntaxError);
 });
 
-test(`[xhr] content error`, async () => {
+test(`content error`, async () => {
   const res = requestWithXhr({
     method: 'POST',
     url: '/test',
@@ -26,7 +26,7 @@ test(`[xhr] content error`, async () => {
   expect(res).rejects.toBeInstanceOf(ContentError);
 });
 
-test(`[xhr] send with json`, async () => {
+test(`send with json`, async () => {
   const res = requestWithXhr({
     method: 'POST',
     url: '/test',
@@ -48,7 +48,7 @@ test(`[xhr] send with json`, async () => {
   });
 });
 
-test(`[xhr] send with form`, async () => {
+test(`send with form`, async () => {
   const res = requestWithXhr({
     method: 'POST',
     url: '/test',
@@ -70,7 +70,7 @@ test(`[xhr] send with form`, async () => {
   });
 });
 
-test(`[xhr] send with multipart`, async () => {
+test(`send with multipart`, async () => {
   const res = requestWithXhr({
     method: 'POST',
     url: '/test',
@@ -92,14 +92,20 @@ test(`[xhr] send with multipart`, async () => {
   });
 });
 
-test(`[xhr] error`, async () => {
-  const res = requestWithXhr({
-    method: 'POST',
-    url: '/test',
-    headers: {
-      error: '1',
-    },
-    data: { a: 1 },
-  });
+test(`error`, async () => {
+  const res = requestWithXhr({ method: 'GET', url: '/', headers: { event: 'error' } });
   expect(res).rejects.toThrowError(FailedToRequest);
+  expect(res).rejects.toMatchObject({ type: 'error' });
+});
+
+test(`timeout`, async () => {
+  const res = requestWithXhr({ method: 'GET', url: '/', headers: { event: 'timeout' } });
+  expect(res).rejects.toThrowError(FailedToRequest);
+  expect(res).rejects.toMatchObject({ type: 'timeout' });
+});
+
+test(`abort`, async () => {
+  const res = requestWithXhr({ method: 'GET', url: '/', headers: { event: 'abort' } });
+  expect(res).rejects.toThrowError(FailedToRequest);
+  expect(res).rejects.toMatchObject({ type: 'abort' });
 });

@@ -2,6 +2,18 @@ import { EventEmitter } from 'events';
 import { readAsDataURL } from './readAsDataURL';
 import { isContentType } from '../../utils/isContentType';
 
+/**
+ * Get a value by a case-insensitive key
+ */
+const getHeader = <T>(headers: Record<string, T>, name: string) => {
+  if (!headers) return undefined;
+  const found = Object.entries(headers).find(
+    ([key]) => key.localeCompare(name, undefined, { sensitivity: 'accent' }) === 0,
+  );
+  if (found) return found[1];
+  return undefined;
+};
+
 global.XMLHttpRequest = class {
   private em = new EventEmitter();
   private openArgs: unknown[] = [];
@@ -18,18 +30,18 @@ global.XMLHttpRequest = class {
   async send(body: string | FormData) {
     const { openArgs, headers } = this;
     this.readyState = 3;
-    this.status = Number(Object(headers)['status-code']) || 200;
+    this.status = Number(getHeader(headers, 'status-code')) || 200;
     this.em.emit('readystatechange');
 
-    const mockError = Object(headers)['error'];
-    if (mockError) {
+    const mockEvent = getHeader(headers, 'event');
+    if (mockEvent) {
       this.readyState = 4;
       this.em.emit('readystatechange');
-      this.em.emit('error', new ProgressEvent('error'));
+      this.em.emit(mockEvent, new ProgressEvent(mockEvent));
       return;
     }
 
-    const mockResponse = Object(headers)['response-body'];
+    const mockResponse = getHeader(headers, 'response-body');
     if (mockResponse) {
       this.readyState = 4;
       this.responseText = mockResponse;
