@@ -1,3 +1,9 @@
+## 1.0.3
+
+- Update dependencies
+- Export some utils
+- Refactor utils
+
 ## 1.0.2
 
 - Update xhr-request test cases
