@@ -5,6 +5,9 @@ import type { InvokeParams } from './types/InvokeParams';
 import type { InvokeResult } from './types/InvokeResult';
 
 export * from './errors';
+export * from './constants';
+
+export { isApplicationJson, isMultipartFormData, isWwwFormUrlEncoded } from './utils/predicates';
 
 export { InvokeContext, InvokeParams, InvokeResult };
 

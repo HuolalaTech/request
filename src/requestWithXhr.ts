@@ -5,6 +5,7 @@ import { buildQs } from './utils/buildQs';
 import { XhrInvokeResult } from './XhrInvokeResult';
 import { ContentError, FailedToRequest } from './errors';
 import { isContentType, isMultipartFormData, isWwwFormUrlEncoded } from './utils/predicates';
+import { APPLICATION_JSON } from './constants';
 
 export const requestWithXhr = <T>({ method, url, data, timeout, headers, files = {} }: InvokeParams) => {
   return new Promise<InvokeResult<T>>((resolve, reject) => {
@@ -60,7 +61,7 @@ export const requestWithXhr = <T>({ method, url, data, timeout, headers, files =
     } else if (data) {
       // If the content type is not provided, use the application/json as the default.
       if (!contentType) {
-        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('Content-Type', APPLICATION_JSON);
         xhr.send(JSON.stringify(data));
       }
       // Serialize the data according to the specified Content-Type.

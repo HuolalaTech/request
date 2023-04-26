@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events';
 import { readAsDataURL } from './readAsDataURL';
 import { isContentType } from '../../utils/predicates';
+import { APPLICATION_JSON, MULTIPART_FORM_DATA } from '../../constants';
 
 /**
  * Get a value by a case-insensitive key
@@ -61,7 +62,7 @@ global.XMLHttpRequest = class {
       }
     } else if (body instanceof FormData) {
       if (!Object.keys(this.headers).some(isContentType)) {
-        this.headers['Content-Type'] = 'multipart/form-data; boundary=----WebKitFormBoundaryHehehehe';
+        this.headers['Content-Type'] = `${MULTIPART_FORM_DATA}; boundary=----WebKitFormBoundaryHehehehe`;
       }
       const temp: Record<string, unknown> = {};
       const tasks = Array.from(body, async ([k, v]) => {
@@ -94,7 +95,7 @@ global.XMLHttpRequest = class {
     this.headers[key] = value;
   }
   getResponseHeader(key: string) {
-    if (key === 'Content-Type') return 'application/json';
+    if (key === 'Content-Type') return APPLICATION_JSON;
     return null;
   }
   getAllResponseHeaders() {
