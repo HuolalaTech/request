@@ -1,5 +1,5 @@
-import { APPLICATION_JSON, MULTIPART_FORM_DATA, WWW_FORM_URLENCODED } from '../../constants';
-import { isApplicationJson, isMultipartFormData, isWwwFormUrlEncoded } from '../../utils/predicates';
+import { APPLICATION_JSON, MULTIPART_FORM_DATA, WWW_FORM_URLENCODED } from '../constants';
+import { isApplicationJson, isMultipartFormData, isWwwFormUrlEncoded } from '..';
 
 test('isApplicationJson', () => {
   expect(isApplicationJson(APPLICATION_JSON)).toBeTruthy();
