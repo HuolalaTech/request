@@ -1,4 +1,4 @@
-import { isValidMPO } from '../../utils/isValidMPO';
+import { isValidMPO } from '../../utils/predicates';
 
 test('basic', () => {
   expect(isValidMPO(null)).toBeFalsy();

@@ -1,6 +1,6 @@
 import { InvokeResult } from './types/InvokeResult';
 import { parseRawHeaderAsMap } from './utils/parseRawHeaderAsMap';
-import { isApplicationJson } from './utils/isApplicationJson';
+import { isApplicationJson } from './utils/predicates';
 
 export class XhrInvokeResult<T> implements InvokeResult<T> {
   public statusCode: number;

@@ -1,12 +1,10 @@
 import { InvokeResult } from './types/InvokeResult';
 import { InvokeParams } from './types/InvokeParams';
-import { isWwwFormData } from './utils/isWwwFormData';
 import { buildFormData } from './utils/buildFormData';
 import { buildQs } from './utils/buildQs';
-import { isMultipartFormData } from './utils/isMultipartFormData';
 import { XhrInvokeResult } from './XhrInvokeResult';
 import { ContentError, FailedToRequest } from './errors';
-import { isContentType } from './utils/isContentType';
+import { isContentType, isMultipartFormData, isWwwFormUrlEncoded } from './utils/predicates';
 
 export const requestWithXhr = <T>({ method, url, data, timeout, headers, files = {} }: InvokeParams) => {
   return new Promise<InvokeResult<T>>((resolve, reject) => {
@@ -66,7 +64,7 @@ export const requestWithXhr = <T>({ method, url, data, timeout, headers, files =
         xhr.send(JSON.stringify(data));
       }
       // Serialize the data according to the specified Content-Type.
-      else if (isWwwFormData(contentType)) {
+      else if (isWwwFormUrlEncoded(contentType)) {
         xhr.setRequestHeader('Content-Type', contentType);
         xhr.send(buildQs(data));
       } else if (isMultipartFormData(contentType)) {

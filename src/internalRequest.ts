@@ -1,11 +1,11 @@
 import { PlatformError } from './errors';
-import { isValidMPO } from './utils/isValidMPO';
 import { requestWithMy } from './requestWithMy';
 import { requestWithSwan } from './requestWithSwan';
 import { requestWithWx } from './requestWithWx';
 import { requestWithXhr } from './requestWithXhr';
 import { InvokeParams } from './types/InvokeParams';
 import { Wx, My, Swan } from './types/libs';
+import { isValidMPO } from './utils/predicates';
 
 declare const wx: Wx;
 declare const my: My;

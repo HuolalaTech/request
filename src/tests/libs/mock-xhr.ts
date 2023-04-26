@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { readAsDataURL } from './readAsDataURL';
-import { isContentType } from '../../utils/isContentType';
+import { isContentType } from '../../utils/predicates';
 
 /**
  * Get a value by a case-insensitive key
