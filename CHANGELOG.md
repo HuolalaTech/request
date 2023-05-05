@@ -1,3 +1,8 @@
+## 1.0.4
+
+- Fix the core logic of the interceptor
+- Fix test coverage
+
 ## 1.0.3
 
 - Update dependencies
