@@ -24,15 +24,16 @@ export const interceptors = {
  */
 export const request = <T = unknown>(args: InvokeParams) => {
   const { request, response } = interceptors;
+  const context: InvokeContext = {};
   // Execute request handlers as a pipeline.
-  return Interceptor.pipeline(request, Promise.resolve(args)).then((params) => {
-    // Prepare the context of response pipeline.
-    const context: InvokeContext = { request: params };
-    // Call the internal request method and wrap it as a promise.
-    const resTask = Promise.resolve(params).then(internalRequest);
-    // Execute response handlers as a pipeline.
-    return Interceptor.pipeline(response, resTask, context) as Promise<InvokeResult<T>>;
+  const pReq = Interceptor.pipeline(request, Promise.resolve(args)).then((params) => {
+    // Update the context that may be used by response handlers.
+    context.request = params;
+    // Call the internal request method.
+    return internalRequest(params);
   });
+  // Execute response handlers as a pipeline.
+  return Interceptor.pipeline(response, pReq, context) as Promise<InvokeResult<T>>;
 };
 // Find the globalThis object across browsers and miniprogram platforms.
 const globalThis =

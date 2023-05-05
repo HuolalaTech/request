@@ -1,3 +1,4 @@
+import { CustomError } from '@huolala-tech/custom-error';
 import { request, interceptors } from '..';
 import { InvokeContext } from '../types/InvokeContext';
 import { InvokeParams } from '../types/InvokeParams';
@@ -98,4 +99,37 @@ test(`request extension fields`, async () => {
     headers: { server: 'mock', wtf: 'hehe' },
     statusCode: 200,
   });
+});
+
+test(`mock data`, async () => {
+  class MockingThrowable extends CustomError {
+    public readonly params: InvokeParams;
+    constructor(params: InvokeParams) {
+      super('never');
+      this.params = params;
+    }
+  }
+
+  const a = (params: InvokeParams) => {
+    throw new MockingThrowable(params);
+  };
+  const b = (error: unknown) => {
+    if (error instanceof MockingThrowable) {
+      return { statusCode: 200, data: error.params.data, headers: { mock: 'true' } };
+    }
+    throw error;
+  };
+
+  interceptors.request.use(a);
+  interceptors.response.use(null, b);
+
+  const res = await request({ method: 'POST', url: '/', data: { a: 1 } });
+  expect(res).toMatchObject({
+    statusCode: 200,
+    data: { a: 1 },
+    headers: { mock: 'true' },
+  });
+
+  interceptors.request.eject(a);
+  interceptors.response.eject(null, b);
 });

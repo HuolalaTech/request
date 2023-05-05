@@ -2,44 +2,68 @@
 
 import { Interceptor } from '../Interceptor';
 
-test('basic', async () => {
-  interface A {
-    a: number;
-  }
+interface A {
+  a: number;
+}
+
+const addOne = ({ a }: A) => ({ a: a + 1 });
+const mulThree = ({ a }: A) => ({ a: a * 3 });
+
+test('order', async () => {
   const icpt = new Interceptor<A, Record<string, never>>();
 
-  const addOne = ({ a }: A) => ({ a: a + 1 });
-  const mulTwo = ({ a }: A) => ({ a: a * 2 });
+  icpt.use(addOne);
+  // 1 + 1 = 2
+  await expect(Interceptor.pipeline(icpt, Promise.resolve({ a: 1 }), {})).resolves.toMatchObject({ a: 2 });
+
+  icpt.use(mulThree);
+  // (1 * 3) + 1 = 4
+  await expect(Interceptor.pipeline(icpt, Promise.resolve({ a: 1 }), {})).resolves.toMatchObject({ a: 4 });
+
+  icpt.eject(addOne);
+  // 1 * 3 = 3
+  await expect(Interceptor.pipeline(icpt, Promise.resolve({ a: 1 }), {})).resolves.toMatchObject({ a: 3 });
+
+  icpt.use(addOne);
+  // (1 + 1) * 3 = 6
+  await expect(Interceptor.pipeline(icpt, Promise.resolve({ a: 1 }), {})).resolves.toMatchObject({ a: 6 });
+
+  icpt.eject(addOne);
+  icpt.eject(mulThree);
+
+  // 1 = 1
+  await expect(Interceptor.pipeline(icpt, Promise.resolve({ a: 1 }), {})).resolves.toMatchObject({ a: 1 });
+});
+
+test('catchAndAddOne', async () => {
+  const icpt = new Interceptor<A, Record<string, never>>();
+
+  const catchAndAddOne = (e: unknown) => addOne(e as A);
+  icpt.use(undefined, catchAndAddOne);
+  // Nothing to do
+  await expect(Interceptor.pipeline(icpt, Promise.resolve({ a: 1 }), {})).resolves.toMatchObject({ a: 1 });
+  // Change "reject" to "resolve", and 1 + 1 = 2
+  await expect(Interceptor.pipeline(icpt, Promise.reject({ a: 1 }), {})).resolves.toMatchObject({ a: 2 });
+
+  icpt.eject(undefined, catchAndAddOne);
+
+  // Nothing to do
+  await expect(Interceptor.pipeline(icpt, Promise.reject({ a: 1 }), {})).rejects.toMatchObject({ a: 1 });
+});
+
+test('throw', async () => {
+  const icpt = new Interceptor<A, Record<string, never>>();
+
   const hehe = new Error('hehe');
   const haha = new Error('haha');
+
   const throwHehe = () => {
     throw hehe;
   };
 
-  icpt.use(addOne);
-  await expect(Interceptor.pipeline(icpt, Promise.resolve({ a: 1 }), {})).resolves.toMatchObject({ a: 2 }); // 1 + 1
-
-  icpt.use(mulTwo);
-  await expect(Interceptor.pipeline(icpt, Promise.resolve({ a: 1 }), {})).resolves.toMatchObject({ a: 4 }); // (1 + 1) * 2
-
-  icpt.eject(addOne);
-  await expect(Interceptor.pipeline(icpt, Promise.resolve({ a: 1 }), {})).resolves.toMatchObject({ a: 2 }); // 1 * 2
-
-  icpt.use(addOne);
-  await expect(Interceptor.pipeline(icpt, Promise.resolve({ a: 1 }), {})).resolves.toMatchObject({ a: 3 }); // 1 * 2 + 1
-
-  icpt.eject(addOne);
-  icpt.eject(mulTwo);
-  const catchAndAddOne = (e: unknown) => addOne(e as A);
-  icpt.use(undefined, catchAndAddOne);
-  await expect(Interceptor.pipeline(icpt, Promise.resolve({ a: 1 }), {})).resolves.toMatchObject({ a: 1 }); // Nothing to do
-  await expect(Interceptor.pipeline(icpt, Promise.reject({ a: 1 }), {})).resolves.toMatchObject({ a: 2 }); // change "reject" to "resolve", 1 + 1
-
-  icpt.eject(undefined, catchAndAddOne);
-  await expect(Interceptor.pipeline(icpt, Promise.reject({ a: 1 }), {})).rejects.toMatchObject({ a: 1 }); // Nothing to do
-
   icpt.use(null, throwHehe);
   await expect(Interceptor.pipeline(icpt, Promise.reject({ a: 1 }), {})).rejects.toMatchObject(hehe);
+  icpt.eject(null, throwHehe);
 
   icpt.use(
     ({ a }) => {
@@ -52,11 +76,11 @@ test('basic', async () => {
       throw haha;
     },
   );
-  await expect(Interceptor.pipeline(icpt, Promise.reject({ a: 1 }), {})).rejects.toMatchObject(haha);
-
-  icpt.eject(null, throwHehe);
   await expect(Interceptor.pipeline(icpt, Promise.reject({ a: 3 }), {})).resolves.toMatchObject({ a: 9 });
   await expect(Interceptor.pipeline(icpt, Promise.resolve({ a: 3 }), {})).resolves.toMatchObject({ a: 15 });
+
+  icpt.use(null, throwHehe);
+  await expect(Interceptor.pipeline(icpt, Promise.reject({ a: 1 }), {})).rejects.toMatchObject(haha);
 });
 
 test('partial change', async () => {

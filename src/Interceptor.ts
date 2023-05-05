@@ -2,21 +2,21 @@ export type MayBeNull<T> = T | null;
 
 export type ResolveHandler<T, C> = MayBeNull<(current: T & C) => void | Partial<T> | PromiseLike<Partial<T>>>;
 
-export type RejectHandler<T, C> = MayBeNull<(error: unknown & C) => T | PromiseLike<T>>;
+export type RejectHandler<T> = MayBeNull<(error: unknown) => T | PromiseLike<T>>;
 
 export class Interceptor<T, C = unknown> {
-  private handlers = [] as [ResolveHandler<T, C>, RejectHandler<T, C>][];
+  private handlers = [] as [ResolveHandler<T, C>, RejectHandler<T>][];
   /**
    * Add an interceptor pairs.
    */
-  use(onfulfilled: ResolveHandler<T, C> = null, onrejected: RejectHandler<T, C> = null) {
+  use(onfulfilled: ResolveHandler<T, C> = null, onrejected: RejectHandler<T> = null) {
     this.handlers.push([onfulfilled, onrejected]);
   }
 
   /**
    * Remove an interceptor pairs.
    */
-  eject(onfulfilled: ResolveHandler<T, C> = null, onrejected: RejectHandler<T, C> = null) {
+  eject(onfulfilled: ResolveHandler<T, C> = null, onrejected: RejectHandler<T> = null) {
     const { handlers } = this;
     // Locate specified handler pairs (strict matching) and remove them from the handlers array.
     for (let i = 0; i < handlers.length; i++) {
@@ -35,7 +35,9 @@ export class Interceptor<T, C = unknown> {
     // Reduce all handlers into a promise chains.
     const { handlers } = interceptor;
     let t = task;
-    for (let i = 0; i < handlers.length; i++) {
+    // NOTE: the handlers is a stack and not a queue, so we need traverse it from right to left.
+    //       I do not know why, but axios to do so, we should keep the uniformity with it.
+    for (let i = handlers.length - 1; i >= 0; i--) {
       const [sHandler, fHander] = handlers[i];
       t = t.then(({ ...args }) => {
         // Nothing to do if the success handler is not provided.
