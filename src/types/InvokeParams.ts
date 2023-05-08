@@ -50,4 +50,11 @@ export interface InvokeParams {
    * | Baidu   | yes  | yes  | yes         | no   | no       |
    */
   responseType?: XMLHttpRequestResponseType;
+
+  /**
+   * The withCredentials flag for XHR object.
+   * NOTE: It's only used in browser.
+   * @default true
+   */
+  withCredentials?: boolean;
 }

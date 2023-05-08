@@ -25,6 +25,24 @@ test(`content error`, async () => {
   expect(res).rejects.toBeInstanceOf(ContentError);
 });
 
+test(`withCredentials=false`, async () => {
+  const params = { method: 'GET', url: '/test', withCredentials: false };
+  const res = await requestWithXhr({ ...params });
+  expect(res.data).toMatchObject(params);
+});
+
+test(`withCredentials=true`, async () => {
+  const params = { method: 'GET', url: '/test', withCredentials: true };
+  const res = await requestWithXhr({ ...params });
+  expect(res.data).toMatchObject(params);
+});
+
+test(`withCredentials defaults to true`, async () => {
+  const params = { method: 'GET', url: '/test' };
+  const res = await requestWithXhr(params);
+  expect(res.data).toMatchObject({ ...params, withCredentials: true });
+});
+
 test(`send with json`, async () => {
   const res = requestWithXhr({
     method: 'POST',

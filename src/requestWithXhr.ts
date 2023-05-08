@@ -16,6 +16,7 @@ export const requestWithXhr = <T, P extends InvokeParams = InvokeParams>({
   headers,
   files = {},
   responseType,
+  withCredentials = true,
 }: P) => {
   return new Promise<InvokeResult<ResponseDataType<T, P>>>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
@@ -30,7 +31,7 @@ export const requestWithXhr = <T, P extends InvokeParams = InvokeParams>({
     xhr.addEventListener('load', () => resolve(new XhrInvokeResult(xhr)));
 
     xhr.open(method, url, true);
-    xhr.withCredentials = true;
+    xhr.withCredentials = withCredentials;
 
     // NOTE: Do not use responseType=json, because
     // 1. Some lagency webkit cannot suport responseType=json.

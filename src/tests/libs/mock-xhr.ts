@@ -16,23 +16,28 @@ const getHeader = <T>(headers: Record<string, T>, name: string) => {
   return undefined;
 };
 
-global.XMLHttpRequest = class {
+global.XMLHttpRequest = class implements Partial<XMLHttpRequest> {
   private em = new EventEmitter();
-  private openArgs: unknown[] = [];
+  private method = 'GET';
+  private url = '';
   private headers: Record<string, string> = {};
   public readyState = 0;
   public status = 0;
-  public timeout?: number;
+  public timeout = 0;
+  public withCredentials = false;
   public response: unknown;
-  public responseText?: string;
-  public responseType?: XMLHttpRequestResponseType;
-  open(...args: unknown[]) {
-    this.openArgs = args;
+  public responseText = '';
+  public responseType: XMLHttpRequestResponseType = '';
+
+  public open(method: string, url: string) {
+    this.method = method;
+    this.url = url;
     this.readyState = 1;
     this.em.emit('readystatechange');
   }
-  async send(body: string | FormData) {
-    const { openArgs, headers } = this;
+
+  public async send(body: string | FormData) {
+    const { method, url, timeout, withCredentials, headers } = this;
     this.readyState = 3;
     this.status = Number(getHeader(headers, 'status-code')) || 200;
     this.em.emit('readystatechange');
@@ -76,15 +81,8 @@ global.XMLHttpRequest = class {
       data = temp;
     }
     await Promise.resolve();
-    const rawResponseBody = JSON.stringify({
-      method: openArgs[0],
-      url: openArgs[1],
-      timeout: this.timeout,
-      headers,
-      data,
-      files,
-    });
-    this.makeDone(rawResponseBody);
+    const raw = JSON.stringify({ method, url, timeout, withCredentials, headers, data, files });
+    this.makeDone(raw);
   }
 
   private makeDone(text: string) {
@@ -101,17 +99,20 @@ global.XMLHttpRequest = class {
     this.em.emit('load');
   }
 
-  addEventListener(e: string, h: () => void) {
+  public addEventListener(e: string, h: (...a: unknown[]) => void) {
     this.em.addListener(e, h);
   }
-  setRequestHeader(key: string, value: string) {
+
+  public setRequestHeader(key: string, value: string) {
     this.headers[key] = value;
   }
-  getResponseHeader(key: string) {
+
+  public getResponseHeader(key: string) {
     if (key === 'Content-Type') return APPLICATION_JSON;
     return null;
   }
-  getAllResponseHeaders() {
+
+  public getAllResponseHeaders() {
     return 'server: mock\r\n';
   }
 } as unknown as typeof XMLHttpRequest;
