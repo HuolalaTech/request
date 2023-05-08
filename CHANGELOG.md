@@ -1,3 +1,10 @@
+## 1.0.5
+
+- Update README.md
+- Support withCredentials
+- Support responseType in InvokeParams
+- Update comments
+
 ## 1.0.4
 
 - Fix the core logic of the interceptor
