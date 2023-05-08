@@ -1,6 +1,5 @@
 import { InvokeResult } from './types/InvokeResult';
 import { parseRawHeaderAsMap } from './utils/parseRawHeaderAsMap';
-import { isApplicationJson } from './utils/predicates';
 
 export class XhrInvokeResult<T> implements InvokeResult<T> {
   public statusCode: number;
@@ -40,15 +39,21 @@ export class XhrInvokeResult<T> implements InvokeResult<T> {
         },
       },
     });
-    const { status, responseText } = xhr;
+
+    const { status, responseType } = xhr;
     this.statusCode = status;
-    let res: unknown = responseText;
-    const ct = xhr.getResponseHeader('Content-Type');
-    // NOTE: A void method of Spring Framework responds with an emtpy content in application/json.
-    // Do not parse it as a JSON if the responseText is emtpy.
-    if ((!ct || isApplicationJson(ct)) && responseText) {
-      res = JSON.parse(responseText);
+
+    if (responseType) {
+      // The `response` property of the xhr object may be a getter, get it only when needed, not too early.
+      this.data = xhr.response;
+    } else {
+      // The `responseText` property of the xhr object may be a getter, get it only when needed, not too early.
+      const { responseText } = xhr;
+      try {
+        this.data = JSON.parse(responseText);
+      } catch (error) {
+        this.data = responseText as T;
+      }
     }
-    this.data = res as T;
   }
 }

@@ -12,7 +12,7 @@ test(`bad json`, async () => {
       'response-body': 'bad json',
     },
   });
-  expect(res).rejects.toBeInstanceOf(SyntaxError);
+  expect(res).resolves.toMatchObject({ data: 'bad json', headers: { server: 'mock' }, statusCode: 200 });
 });
 
 test(`content error`, async () => {
@@ -87,6 +87,15 @@ test(`send with multipart`, async () => {
     headers: { server: 'mock' },
     statusCode: 200,
   });
+});
+
+test(`blob`, async () => {
+  const params = { method: 'GET', url: '/test' };
+  const res = await requestWithXhr({ ...params, responseType: 'blob' });
+  const fr = new FileReader();
+  fr.readAsText(res.data);
+  await new Promise((f) => fr.addEventListener('load', f));
+  expect(JSON.parse(fr.result as string)).toMatchObject(params);
 });
 
 test(`error`, async () => {

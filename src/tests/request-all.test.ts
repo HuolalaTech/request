@@ -2,6 +2,7 @@ import { requestWithXhr } from '../requestWithXhr';
 import { requestWithWx } from '../requestWithWx';
 import { requestWithMy } from '../requestWithMy';
 import { requestWithSwan } from '../requestWithSwan';
+import { TextDecoder } from 'util';
 
 import './libs/mock-xhr';
 import './libs/mock-wx';
@@ -87,6 +88,25 @@ describe('all libs tests', () => {
         headers: { server: 'mock' },
         statusCode: 500,
       });
+    });
+
+    test(`[${name}] responseType=arraybuffer`, async () => {
+      const params = { method: 'GET', url: '/test' };
+      const res = await request({ ...params, responseType: 'arraybuffer' });
+      const raw = new TextDecoder().decode(res.data);
+      expect(JSON.parse(raw)).toMatchObject(params);
+    });
+
+    test(`[${name}] responseType=text`, async () => {
+      const params = { method: 'GET', url: '/test' };
+      const res = await request({ ...params, responseType: 'text' });
+      expect(JSON.parse(res.data)).toMatchObject(params);
+    });
+
+    test(`[${name}] responseType=json`, async () => {
+      const params = { method: 'GET', url: '/test' };
+      const res = await request({ ...params, responseType: 'json' });
+      expect(res.data).toMatchObject(params);
     });
   }
 });

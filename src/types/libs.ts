@@ -1,4 +1,4 @@
-export type FixMy<T extends { header?: Header }> = Omit<T, 'header'> & {
+export type FixMy<T extends { header?: Header }> = Omit<T, 'header' | 'responseType'> & {
   headers: T['header'];
 };
 
@@ -14,6 +14,8 @@ export interface WxReq1<T = WxRes> {
   success: (obj: T) => void;
   fail?: (reason: unknown) => void;
   header?: Header;
+  responseType?: 'text' | 'arraybuffer';
+  dataType?: string;
   data?: Record<string, unknown>;
 }
 

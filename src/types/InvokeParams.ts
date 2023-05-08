@@ -38,4 +38,16 @@ export interface InvokeParams {
    *       if you specify more than one file, a BatchUploadError will be thrown.
    */
   files?: Record<string, Blob | File | string>;
+
+  /**
+   * Specify the response type.
+   *
+   * | \       | text | json | arraybuffer | blob | document |
+   * | ------- | ---- | ---- | ----------- | ---- | -------- |
+   * | Browser | yes  | yes  | yes         | yes  | yes      |
+   * | WeChat  | yes  | yes  | yes         | no   | no       |
+   * | Alipay  | yes  | yes  | yes         | no   | no       |
+   * | Baidu   | yes  | yes  | yes         | no   | no       |
+   */
+  responseType?: XMLHttpRequestResponseType;
 }

@@ -16,7 +16,7 @@ class MyConstructor extends BaseMPO implements My {
     req.success({
       statusCode: Number(Object(headers)['status-code']) || 200,
       headers: { server: 'mock' },
-      data: { ...rest, headers },
+      data: this.makeData({ ...rest, headers }, rest.dataType),
     });
   }
   uploadFile(req: WxReq2) {

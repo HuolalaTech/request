@@ -2,6 +2,7 @@ import { EventEmitter } from 'events';
 import { readAsDataURL } from './readAsDataURL';
 import { isContentType } from '../../utils/predicates';
 import { APPLICATION_JSON, MULTIPART_FORM_DATA } from '../../constants';
+import { TextEncoder } from 'util';
 
 /**
  * Get a value by a case-insensitive key
@@ -22,7 +23,9 @@ global.XMLHttpRequest = class {
   public readyState = 0;
   public status = 0;
   public timeout?: number;
-  public responseText = '';
+  public response: unknown;
+  public responseText?: string;
+  public responseType?: XMLHttpRequestResponseType;
   open(...args: unknown[]) {
     this.openArgs = args;
     this.readyState = 1;
@@ -44,10 +47,7 @@ global.XMLHttpRequest = class {
 
     const mockResponse = getHeader(headers, 'response-body');
     if (mockResponse) {
-      this.readyState = 4;
-      this.responseText = mockResponse;
-      this.em.emit('readystatechange');
-      this.em.emit('load');
+      this.makeDone(mockResponse);
       return;
     }
 
@@ -76,7 +76,7 @@ global.XMLHttpRequest = class {
       data = temp;
     }
     await Promise.resolve();
-    this.responseText = JSON.stringify({
+    const rawResponseBody = JSON.stringify({
       method: openArgs[0],
       url: openArgs[1],
       timeout: this.timeout,
@@ -84,10 +84,23 @@ global.XMLHttpRequest = class {
       data,
       files,
     });
+    this.makeDone(rawResponseBody);
+  }
+
+  private makeDone(text: string) {
+    this.responseText = text;
+    if (this.responseType === 'blob') {
+      this.response = new Blob([text]);
+    } else if (this.responseType === 'arraybuffer') {
+      this.response = new TextEncoder().encode(text).buffer;
+    } else {
+      this.response = text;
+    }
     this.readyState = 4;
     this.em.emit('readystatechange');
     this.em.emit('load');
   }
+
   addEventListener(e: string, h: () => void) {
     this.em.addListener(e, h);
   }

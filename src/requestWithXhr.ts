@@ -6,9 +6,18 @@ import { XhrInvokeResult } from './XhrInvokeResult';
 import { ContentError, FailedToRequest } from './errors';
 import { isContentType, isMultipartFormData, isWwwFormUrlEncoded } from './utils/predicates';
 import { APPLICATION_JSON } from './constants';
+import { ResponseDataType } from './types/ResponseDataType';
 
-export const requestWithXhr = <T>({ method, url, data, timeout, headers, files = {} }: InvokeParams) => {
-  return new Promise<InvokeResult<T>>((resolve, reject) => {
+export const requestWithXhr = <T, P extends InvokeParams = InvokeParams>({
+  method,
+  url,
+  data,
+  timeout,
+  headers,
+  files = {},
+  responseType,
+}: P) => {
+  return new Promise<InvokeResult<ResponseDataType<T, P>>>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
 
     // The readyState 4 indicates that the XHR object is working completed,
@@ -18,17 +27,18 @@ export const requestWithXhr = <T>({ method, url, data, timeout, headers, files =
     xhr.addEventListener('abort', errorHandler);
     xhr.addEventListener('timeout', errorHandler);
     xhr.addEventListener('error', errorHandler);
-    xhr.addEventListener('load', () => {
-      try {
-        resolve(new XhrInvokeResult<T>(xhr));
-      } catch (error) {
-        reject(error);
-      }
-    });
+    xhr.addEventListener('load', () => resolve(new XhrInvokeResult(xhr)));
 
     xhr.open(method, url, true);
-
     xhr.withCredentials = true;
+
+    // NOTE: Do not use responseType=json, because
+    // 1. Some lagency webkit cannot suport responseType=json.
+    // 2. The behavior of json type will change illegal JSON response to null and never catch parsing errors.
+    //    In fact, if there is parsing error, we should use the original string as the result.
+    if (responseType && responseType !== 'json') {
+      xhr.responseType = responseType;
+    }
 
     if (timeout) xhr.timeout = timeout;
 

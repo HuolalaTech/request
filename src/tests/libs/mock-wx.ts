@@ -13,10 +13,11 @@ class WxConstructor extends BaseMPO implements Wx {
     }
 
     await Promise.resolve();
+
     req.success({
       statusCode: Number(Object(header)['status-code']) || 200,
       header: { server: 'mock' },
-      data: { ...rest, headers: header },
+      data: this.makeData({ ...rest, headers: header }, rest.dataType || rest.responseType),
     });
   }
   uploadFile(req: WxReq2) {
