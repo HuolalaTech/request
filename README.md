@@ -16,14 +16,16 @@ npm install @huolala-tech/request --save
 
 ## Params
 
-| name    | type                                   | description     |
-| ------- | -------------------------------------- | --------------- |
-| method  | string                                 | Request method  |
-| url     | string                                 | Request URL     |
-| data    | any                                    | Request payload |
-| timeout | number                                 | Request timeout |
-| headers | Record<string, string>                 | Request header  |
-| files   | Record<string, Blob \| File \| string> | Payload files   |
+| name            | type                                            | description                             |
+| --------------- | ----------------------------------------------- | --------------------------------------- |
+| method          | string                                          | Request method                          |
+| url             | string                                          | Request URL                             |
+| data            | any                                             | Request payload                         |
+| timeout         | number                                          | Request timeout in milliseconds         |
+| headers         | Record\<string, string\>                        | Request header                          |
+| files           | Record\<string, Blob \| File \| string\>        | Payload files                           |
+| responseType    | text \| json \| arraybuffer \| blob \| document | Response type                           |
+| withCredentials | boolean                                         | The withCredentials flag for XHR object |
 
 > NOTE 1: The `method` field
 >
@@ -32,7 +34,16 @@ npm install @huolala-tech/request --save
 > NOTE 2: The `files` field
 >
 > 1. In browsers, the file is represented as a Blob or File object, whereas in other MiniProgram platforms, the file is represented as a string filePath.
-> 2. NOTE: MiniProgram platforms doese not suport multiple files uploading in once.
+> 2. MiniProgram platforms doese not suport multiple files uploading in once.
+
+> NOTE 3: The `responseType` field
+>
+> 1. The values of `blob` and `document` can only be used on browser.
+> 2. The `responseType` can not be used with `files` on MiniProgram platforms.
+
+> NOTE 4: The `withCredentials` field
+>
+> 1. This can only be used on browser.
 
 ## Return (Promise<?>)
 
@@ -45,14 +56,14 @@ npm install @huolala-tech/request --save
 ## Demo
 
 ```typescript
-import { request } from "@huolala-tech/request";
+import { request } from '@huolala-tech/request';
 
 async function main() {
   const res = await request({
-    method: "POST",
-    url: "http://localhost/api",
+    method: 'POST',
+    url: 'http://localhost/api',
     data: {
-      xxx: "xxx",
+      xxx: 'xxx',
     },
   });
 
@@ -69,19 +80,19 @@ async function main() {
 > Taking into account the learning cost, our interceptors API design is modeled after the Axios.
 
 ```typescript
-import { request, interceptors } from "@huolala-tech/request";
+import { request, interceptors } from '@huolala-tech/request';
 
 // Add Authorization: xxx header for all requests.
 interceptors.request.use((req) => {
-  args.headers = { ...Object(args.headers), Authorization: "xxx" };
+  args.headers = { ...Object(args.headers), Authorization: 'xxx' };
 });
 
 // If any request responds with a 401 code, go to login.
 interceptors.response.use((res) => {
   if (res.statusCode === 401) {
-    location.href = "http://blahblahblah/";
+    location.href = 'http://blahblahblah/';
   }
 });
 
-request({ method: "POST", url: "http://localhost/api/user" });
+request({ method: 'POST', url: 'http://localhost/api/user' });
 ```
