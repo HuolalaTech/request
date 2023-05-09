@@ -36,6 +36,10 @@ global.XMLHttpRequest = class implements Partial<XMLHttpRequest> {
     this.em.emit('readystatechange');
   }
 
+  public abort() {
+    this.em.emit('abort', new Event('abort'));
+  }
+
   public async send(body: string | FormData) {
     const { method, url, timeout, withCredentials, headers } = this;
     this.readyState = 3;

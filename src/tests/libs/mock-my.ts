@@ -1,3 +1,4 @@
+import { RequestController } from '../../RequestController';
 import type { My, MyReq1, WxReq2 } from '../../types/libs';
 import { UploadTaskImpl } from './UploadTaskImpl';
 import { BaseMPO } from './mock-base';
@@ -5,26 +6,30 @@ import { readAsDataURL } from './readAsDataURL';
 
 class MyConstructor extends BaseMPO implements My {
   request(req: MyReq1) {
-    const { headers, ...rest } = req;
-    setTimeout(async () => {
+    const task = new RequestController();
+    const timer = setTimeout(async () => {
+      const { headers, ...rest } = req;
       const { code, msg } = Object(headers);
       if (req.fail && (code || msg)) {
-        await Promise.resolve();
         return req.fail({ error: Number(code), errorMessage: msg });
       }
-
-      await Promise.resolve();
       req.success({
         statusCode: Number(Object(headers)['status-code']) || 200,
         headers: { server: 'mock' },
         data: this.makeData({ ...rest, headers }, rest.dataType),
       });
+      task.abort = () => undefined;
     });
-    return new AbortController();
+    task.abort = () => {
+      clearTimeout(timer);
+      if (req.fail) req.fail({ errMsg: 'request:fail abort' });
+    };
+    return task;
   }
   uploadFile(req: WxReq2) {
-    const { header, name, filePath, formData, ...rest } = req;
-    setTimeout(async () => {
+    const task = new UploadTaskImpl();
+    const timer = setTimeout(async () => {
+      const { header, name, filePath, formData, ...rest } = req;
       req.success({
         statusCode: Number(Object(header)['status-code']) || 200,
         header: { server: 'mock' },
@@ -35,8 +40,13 @@ class MyConstructor extends BaseMPO implements My {
           files: { [name]: await readAsDataURL(filePath) },
         },
       });
+      task.abort = () => undefined;
     });
-    return new UploadTaskImpl();
+    task.abort = () => {
+      clearTimeout(timer);
+      if (req.fail) req.fail({ errMsg: 'request:fail abort' });
+    };
+    return task;
   }
 }
 

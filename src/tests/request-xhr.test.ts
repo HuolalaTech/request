@@ -1,3 +1,4 @@
+import { RequestController } from '../RequestController';
 import { APPLICATION_JSON, MULTIPART_FORM_DATA, WWW_FORM_URLENCODED } from '../constants';
 import { ContentError, FailedToRequest } from '../errors';
 import { requestWithXhr } from '../requestWithXhr';
@@ -129,7 +130,9 @@ test(`timeout`, async () => {
 });
 
 test(`abort`, async () => {
-  const res = requestWithXhr({ method: 'GET', url: '/', headers: { event: 'abort' } });
-  expect(res).rejects.toThrowError(FailedToRequest);
-  expect(res).rejects.toMatchObject({ type: 'abort' });
+  const params = { method: 'GET', url: '/test' };
+  const controller = new RequestController();
+  const req = requestWithXhr({ ...params, responseType: 'json' }, controller);
+  controller.abort();
+  expect(req).rejects.toBeInstanceOf(FailedToRequest);
 });
