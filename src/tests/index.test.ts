@@ -1,5 +1,5 @@
 import './libs/mock-xhr';
-import { request } from '..';
+import { FailedToRequest, request } from '..';
 
 type IsAny<T> = 0 extends 1 & T ? true : false;
 type IsUnknown<T> = unknown extends T ? true : false;
@@ -38,4 +38,10 @@ test('text', async () => {
   const { data } = await request({ method: 'GET', url: '', responseType: 'text' });
   const isString: string = data;
   expect(typeof isString).toBe('string');
+});
+
+test('abort', async () => {
+  const req = request({ method: 'GET', url: '', responseType: 'text' });
+  req.abort();
+  expect(req).rejects.toBeInstanceOf(FailedToRequest);
 });

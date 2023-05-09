@@ -14,7 +14,6 @@ export const requestWithXhr = <T>(
 ) => {
   return new Promise<InvokeResult<T>>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    controller.abort = () => xhr.abort();
 
     // The readyState 4 indicates that the XHR object is working completed,
     // but just completed alone cannot ensure success.
@@ -85,5 +84,6 @@ export const requestWithXhr = <T>(
     } else {
       xhr.send();
     }
+    controller.abort = () => xhr.abort();
   });
 };
