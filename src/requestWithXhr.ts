@@ -6,9 +6,8 @@ import { XhrInvokeResult } from './XhrInvokeResult';
 import { ContentError, FailedToRequest } from './errors';
 import { isContentType, isMultipartFormData, isWwwFormUrlEncoded } from './utils/predicates';
 import { APPLICATION_JSON } from './constants';
-import { ResponseDataType } from './types/ResponseDataType';
 
-export const requestWithXhr = <T, P extends InvokeParams = InvokeParams>({
+export const requestWithXhr = <T>({
   method,
   url,
   data,
@@ -17,8 +16,8 @@ export const requestWithXhr = <T, P extends InvokeParams = InvokeParams>({
   files = {},
   responseType,
   withCredentials = true,
-}: P) => {
-  return new Promise<InvokeResult<ResponseDataType<T, P>>>((resolve, reject) => {
+}: InvokeParams) => {
+  return new Promise<InvokeResult<T>>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
 
     // The readyState 4 indicates that the XHR object is working completed,

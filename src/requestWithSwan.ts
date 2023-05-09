@@ -2,7 +2,6 @@ import { InvokeResult } from './types/InvokeResult';
 import { InvokeParams } from './types/InvokeParams';
 import type { Wx } from './types/libs';
 import { BatchUploadError, MiniProgramError } from './errors';
-import { ResponseDataType } from './types/ResponseDataType';
 
 declare const swan: Wx;
 
@@ -14,8 +13,8 @@ const convertResponseType = (responseType?: InvokeParams['responseType']) => {
   throw new TypeError(`The responseType "${responseType}" is not supported by WeChat Miniprogram`);
 };
 
-export const requestWithSwan = <T, P extends InvokeParams = InvokeParams>(args: P) =>
-  new Promise<InvokeResult<ResponseDataType<T, P>>>((resolve, reject) => {
+export const requestWithSwan = <T>(args: InvokeParams) =>
+  new Promise<InvokeResult<T>>((resolve, reject) => {
     const { headers, files, data, responseType, ...rest } = args;
     const fileNames = files ? Object.keys(files) : [];
 
@@ -35,8 +34,7 @@ export const requestWithSwan = <T, P extends InvokeParams = InvokeParams>(args: 
           data,
           ...convertResponseType(responseType),
           ...rest,
-          success: ({ header, data, ...rest }) =>
-            resolve({ data: data as ResponseDataType<T, P>, headers: header, ...rest }),
+          success: ({ header, data, ...rest }) => resolve({ data: data as T, headers: header, ...rest }),
           fail,
         });
       } else if (files && fileNames.length === 1) {
@@ -54,8 +52,7 @@ export const requestWithSwan = <T, P extends InvokeParams = InvokeParams>(args: 
           name,
           filePath,
           ...rest,
-          success: ({ header, data, ...rest }) =>
-            resolve({ headers: header, data: data as ResponseDataType<T, P>, ...rest }),
+          success: ({ header, data, ...rest }) => resolve({ headers: header, data: data as T, ...rest }),
           fail,
         });
       } else {

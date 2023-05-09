@@ -109,7 +109,7 @@ test(`send with multipart`, async () => {
 
 test(`blob`, async () => {
   const params = { method: 'GET', url: '/test' };
-  const res = await requestWithXhr({ ...params, responseType: 'blob' });
+  const res = await requestWithXhr<Blob>({ ...params, responseType: 'blob' });
   const fr = new FileReader();
   fr.readAsText(res.data);
   await new Promise((f) => fr.addEventListener('load', f));

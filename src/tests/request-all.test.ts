@@ -92,14 +92,14 @@ describe('all libs tests', () => {
 
     test(`[${name}] responseType=arraybuffer`, async () => {
       const params = { method: 'GET', url: '/test' };
-      const res = await request({ ...params, responseType: 'arraybuffer' });
+      const res = await request<ArrayBuffer>({ ...params, responseType: 'arraybuffer' });
       const raw = new TextDecoder().decode(res.data);
       expect(JSON.parse(raw)).toMatchObject(params);
     });
 
     test(`[${name}] responseType=text`, async () => {
       const params = { method: 'GET', url: '/test' };
-      const res = await request({ ...params, responseType: 'text' });
+      const res = await request<string>({ ...params, responseType: 'text' });
       expect(JSON.parse(res.data)).toMatchObject(params);
     });
 

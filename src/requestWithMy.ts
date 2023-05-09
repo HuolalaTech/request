@@ -2,7 +2,6 @@ import { InvokeResult } from './types/InvokeResult';
 import { InvokeParams } from './types/InvokeParams';
 import { My } from './types/libs';
 import { BatchUploadError, MiniProgramError } from './errors';
-import { ResponseDataType } from './types/ResponseDataType';
 
 declare const my: My;
 
@@ -13,8 +12,8 @@ const convertResponseType = (responseType?: InvokeParams['responseType']) => {
   throw new TypeError(`The responseType "${responseType}" is not supported by Alipay Miniprogram`);
 };
 
-export const requestWithMy = <T, P extends InvokeParams = InvokeParams>(args: P) =>
-  new Promise<InvokeResult<ResponseDataType<T, P>>>((resolve, reject) => {
+export const requestWithMy = <T>(args: InvokeParams) =>
+  new Promise<InvokeResult<T>>((resolve, reject) => {
     const { headers, files, data, responseType, ...rest } = args;
     const fileNames = files ? Object.keys(files) : [];
 
@@ -37,7 +36,7 @@ export const requestWithMy = <T, P extends InvokeParams = InvokeParams>(args: P)
           ...convertResponseType(responseType),
           ...rest,
           success: ({ data, ...rest }) => {
-            resolve({ data: data as ResponseDataType<T, P>, ...rest });
+            resolve({ data: data as T, ...rest });
           },
           fail,
         });
@@ -56,8 +55,7 @@ export const requestWithMy = <T, P extends InvokeParams = InvokeParams>(args: P)
           name,
           filePath,
           ...rest,
-          success: ({ header, data, ...rest }) =>
-            resolve({ headers: header, data: data as ResponseDataType<T, P>, ...rest }),
+          success: ({ header, data, ...rest }) => resolve({ headers: header, data: data as T, ...rest }),
           fail,
         });
       } else {

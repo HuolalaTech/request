@@ -18,11 +18,43 @@ export const interceptors = {
 };
 
 /**
- * Send a http request.
- * NOTE: The generic parameter T is not validated.
- * @returns {Promise<T>}
+ * Send an HTTP request and parse the result into JSON.
+ * NOTE:
+ * 1. The generic parameter T will not be validated.
+ * 2. The Content-Type of the response will be ignored.
+ *    Although it is not a recommended practice, some MiniProgram platforms do it,
+ *    so this library is designed to be compatible with them.
+ * 3. If JSON parsing fails, an error will not be thrown.
+ *    Instead, the original bad JSON will be provided as a string.
  */
-export const request = <T = unknown>(args: InvokeParams) => {
+export function request<T>(args: InvokeParams & { responseType?: 'json' }): Promise<InvokeResult<T>>;
+
+/**
+ * Send an HTTP request and receive the result in an arraybuffer.
+ * NOTE:
+ * 1. Even if the response status is not 2xx, the response body will also be stored in an arraybuffer.
+ * 2. The Content-Type of the response will be ignored.
+ */
+export function request(args: InvokeParams & { responseType: 'arraybuffer' }): Promise<InvokeResult<ArrayBuffer>>;
+
+/**
+ * Send an HTTP request and receive the result as a string.
+ * NOTE:
+ * 1. Even if the response status is not 2xx, the response body will also be stored in a string.
+ * 2. The Content-Type of the response will be ignored.
+ */
+export function request(args: InvokeParams & { responseType: 'text' }): Promise<InvokeResult<string>>;
+
+/**
+ * Send an HTTP request and receive the result as a Blob object.
+ * NOTE:
+ * 1. This "blob" type can only be used in browser environment, and MiniProgram platforms do not support it.
+ * 2. Even if the response status is not 2xx, the response body will also be stored in a Blob object.
+ * 3. The Content-Type of the response will be ignored.
+ */
+export function request(args: InvokeParams & { responseType: 'blob' }): Promise<InvokeResult<Blob>>;
+
+export function request(args: InvokeParams) {
   const { request, response } = interceptors;
   const context: InvokeContext = {};
   // Execute request handlers as a pipeline.
@@ -33,8 +65,9 @@ export const request = <T = unknown>(args: InvokeParams) => {
     return internalRequest(params);
   });
   // Execute response handlers as a pipeline.
-  return Interceptor.pipeline(response, pReq, context) as Promise<InvokeResult<T>>;
-};
+  return Interceptor.pipeline(response, pReq, context);
+}
+
 // Find the globalThis object across browsers and miniprogram platforms.
 const globalThis =
   typeof window === 'object' ? window : typeof global === 'object' ? global : /* istanbul ignore next */ null;

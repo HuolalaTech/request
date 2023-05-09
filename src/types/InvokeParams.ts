@@ -42,12 +42,12 @@ export interface InvokeParams {
   /**
    * Specify the response type.
    *
-   * | \       | text | json | arraybuffer | blob | document |
-   * | ------- | ---- | ---- | ----------- | ---- | -------- |
-   * | Browser | yes  | yes  | yes         | yes  | yes      |
-   * | WeChat  | yes  | yes  | yes         | no   | no       |
-   * | Alipay  | yes  | yes  | yes         | no   | no       |
-   * | Baidu   | yes  | yes  | yes         | no   | no       |
+   * |             | Browser | WeChat | Alipay | Baidu |
+   * | ----------- | ------- | ------ | ------ | ----- |
+   * | text        | yes     | yes    | yes    | yes   |
+   * | json        | yes     | yes    | yes    | yes   |
+   * | arraybuffer | yes     | yes    | yes    | yes   |
+   * | blob        | yes     | no     | no     | no    |
    */
   responseType?: XMLHttpRequestResponseType;
 

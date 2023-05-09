@@ -2,7 +2,6 @@ import { InvokeResult } from './types/InvokeResult';
 import { InvokeParams } from './types/InvokeParams';
 import { Wx } from './types/libs';
 import { BatchUploadError, MiniProgramError } from './errors';
-import { ResponseDataType } from './types/ResponseDataType';
 
 declare const wx: Wx;
 
@@ -13,8 +12,8 @@ const convertResponseType = (responseType?: InvokeParams['responseType']) => {
   throw new TypeError(`The responseType "${responseType}" is not supported by WeChat Miniprogram`);
 };
 
-export const requestWithWx = <T, P extends InvokeParams = InvokeParams>(args: P) =>
-  new Promise<InvokeResult<ResponseDataType<T, P>>>((resolve, reject) => {
+export const requestWithWx = <T>(args: InvokeParams) =>
+  new Promise<InvokeResult<T>>((resolve, reject) => {
     const { headers, files, data, responseType, ...rest } = args;
     const fileNames = files ? Object.keys(files) : [];
 
@@ -36,8 +35,7 @@ export const requestWithWx = <T, P extends InvokeParams = InvokeParams>(args: P)
           data,
           ...convertResponseType(responseType),
           ...rest,
-          success: ({ header, data, ...rest }) =>
-            resolve({ ...rest, headers: header, data: data as ResponseDataType<T, P> }),
+          success: ({ header, data, ...rest }) => resolve({ ...rest, headers: header, data: data as T }),
           fail,
         });
       } else if (files && fileNames.length === 1) {
@@ -55,8 +53,7 @@ export const requestWithWx = <T, P extends InvokeParams = InvokeParams>(args: P)
           name,
           filePath,
           ...rest,
-          success: ({ header, data, ...rest }) =>
-            resolve({ headers: header, data: data as ResponseDataType<T, P>, ...rest }),
+          success: ({ header, data, ...rest }) => resolve({ headers: header, data: data as T, ...rest }),
           fail,
         });
       } else {
