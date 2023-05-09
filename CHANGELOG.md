@@ -1,3 +1,8 @@
+## 1.0.6
+
+- Update dependencies
+- Fix overrided entry function
+
 ## 1.0.5
 
 - Update README.md
