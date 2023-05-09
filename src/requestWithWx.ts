@@ -2,6 +2,7 @@ import { InvokeResult } from './types/InvokeResult';
 import { InvokeParams } from './types/InvokeParams';
 import { Wx } from './types/libs';
 import { BatchUploadError, MiniProgramError } from './errors';
+import { RequestController } from './RequestController';
 
 declare const wx: Wx;
 
@@ -12,7 +13,7 @@ const convertResponseType = (responseType?: InvokeParams['responseType']) => {
   throw new TypeError(`The responseType "${responseType}" is not supported by WeChat Miniprogram`);
 };
 
-export const requestWithWx = <T>(args: InvokeParams) =>
+export const requestWithWx = <T>(args: InvokeParams, controller: RequestController = new RequestController()) =>
   new Promise<InvokeResult<T>>((resolve, reject) => {
     const { headers, files, data, responseType, ...rest } = args;
     const fileNames = files ? Object.keys(files) : [];
@@ -30,7 +31,7 @@ export const requestWithWx = <T>(args: InvokeParams) =>
         /**
          * @see https://developers.weixin.qq.com/miniprogram/dev/api/network/request/wx.request.html
          */
-        wx.request({
+        const task = wx.request({
           header: headers,
           data,
           ...convertResponseType(responseType),
@@ -38,6 +39,7 @@ export const requestWithWx = <T>(args: InvokeParams) =>
           success: ({ header, data, ...rest }) => resolve({ ...rest, headers: header, data: data as T }),
           fail,
         });
+        controller.abort = () => task.abort();
       } else if (files && fileNames.length === 1) {
         if (responseType) {
           throw new TypeError('The `responseType` is not supported if `files` not empty in WeChat Miniprogram');
@@ -47,7 +49,7 @@ export const requestWithWx = <T>(args: InvokeParams) =>
         /**
          * @see https://developers.weixin.qq.com/miniprogram/dev/api/network/upload/wx.uploadFile.html
          */
-        wx.uploadFile({
+        const task = wx.uploadFile({
           header: headers,
           formData: data,
           name,
@@ -56,6 +58,7 @@ export const requestWithWx = <T>(args: InvokeParams) =>
           success: ({ header, data, ...rest }) => resolve({ headers: header, data: data as T, ...rest }),
           fail,
         });
+        controller.abort = () => task.abort();
       } else {
         throw new BatchUploadError();
       }

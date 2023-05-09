@@ -1,23 +1,26 @@
 import type { My, MyReq1, WxReq2 } from '../../types/libs';
+import { UploadTaskImpl } from './UploadTaskImpl';
 import { BaseMPO } from './mock-base';
 import { readAsDataURL } from './readAsDataURL';
 
 class MyConstructor extends BaseMPO implements My {
-  async request(req: MyReq1) {
+  request(req: MyReq1) {
     const { headers, ...rest } = req;
+    setTimeout(async () => {
+      const { code, msg } = Object(headers);
+      if (req.fail && (code || msg)) {
+        await Promise.resolve();
+        return req.fail({ error: Number(code), errorMessage: msg });
+      }
 
-    const { code, msg } = Object(headers);
-    if (req.fail && (code || msg)) {
       await Promise.resolve();
-      return req.fail({ error: Number(code), errorMessage: msg });
-    }
-
-    await Promise.resolve();
-    req.success({
-      statusCode: Number(Object(headers)['status-code']) || 200,
-      headers: { server: 'mock' },
-      data: this.makeData({ ...rest, headers }, rest.dataType),
+      req.success({
+        statusCode: Number(Object(headers)['status-code']) || 200,
+        headers: { server: 'mock' },
+        data: this.makeData({ ...rest, headers }, rest.dataType),
+      });
     });
+    return new AbortController();
   }
   uploadFile(req: WxReq2) {
     const { header, name, filePath, formData, ...rest } = req;
@@ -33,6 +36,7 @@ class MyConstructor extends BaseMPO implements My {
         },
       });
     });
+    return new UploadTaskImpl();
   }
 }
 

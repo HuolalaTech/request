@@ -2,6 +2,15 @@ export type FixMy<T extends { header?: Header }> = Omit<T, 'header' | 'responseT
   headers: T['header'];
 };
 
+export interface RequestTask {
+  abort(): void;
+}
+
+export interface UploadTask extends RequestTask {
+  onProgressUpdate(listener: (res: unknown) => void): void;
+  offProgressUpdate(listener: (res: unknown) => void): void;
+}
+
 export type Header = Record<string, string>;
 
 export interface WxRes {
@@ -29,8 +38,8 @@ export interface WxReq2<T = WxRes> {
 }
 
 export interface Wx {
-  request(req: WxReq1): void;
-  uploadFile(req: WxReq2): void;
+  request(req: WxReq1): RequestTask;
+  uploadFile(req: WxReq2): UploadTask;
 }
 
 export type Swan = Wx;
@@ -38,6 +47,6 @@ export type Swan = Wx;
 export type MyReq1 = FixMy<WxReq1<FixMy<WxRes>>>;
 
 export interface My {
-  request(req: MyReq1): void;
-  uploadFile(req: WxReq2): void;
+  request(req: MyReq1): RequestTask;
+  uploadFile(req: WxReq2): UploadTask;
 }

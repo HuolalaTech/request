@@ -6,19 +6,15 @@ import { XhrInvokeResult } from './XhrInvokeResult';
 import { ContentError, FailedToRequest } from './errors';
 import { isContentType, isMultipartFormData, isWwwFormUrlEncoded } from './utils/predicates';
 import { APPLICATION_JSON } from './constants';
+import { RequestController } from './RequestController';
 
-export const requestWithXhr = <T>({
-  method,
-  url,
-  data,
-  timeout,
-  headers,
-  files = {},
-  responseType,
-  withCredentials = true,
-}: InvokeParams) => {
+export const requestWithXhr = <T>(
+  { method, url, data, timeout, headers, files = {}, responseType, withCredentials = true }: InvokeParams,
+  controller: RequestController = new RequestController(),
+) => {
   return new Promise<InvokeResult<T>>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
+    controller.abort = () => xhr.abort();
 
     // The readyState 4 indicates that the XHR object is working completed,
     // but just completed alone cannot ensure success.
