@@ -1,5 +1,5 @@
 import { RequestController } from '../RequestController';
-import { APPLICATION_JSON, MULTIPART_FORM_DATA, WWW_FORM_URLENCODED } from '../constants';
+import { APPLICATION_JSON, CONTENT_TYPE, MULTIPART_FORM_DATA, WWW_FORM_URLENCODED } from '../constants';
 import { ContentError, FailedToRequest } from '../errors';
 import { requestWithXhr } from '../requestWithXhr';
 
@@ -20,7 +20,7 @@ test(`content error`, async () => {
   const res = requestWithXhr({
     method: 'POST',
     url: '/test',
-    headers: { 'Content-Type': APPLICATION_JSON },
+    headers: { [CONTENT_TYPE]: APPLICATION_JSON },
     files: { f1: new Blob() },
   });
   expect(res).rejects.toBeInstanceOf(ContentError);
@@ -48,14 +48,14 @@ test(`send with json`, async () => {
   const res = requestWithXhr({
     method: 'POST',
     url: '/test',
-    headers: { 'Content-Type': APPLICATION_JSON },
+    headers: { [CONTENT_TYPE]: APPLICATION_JSON },
     data: { a: 1 },
   });
   expect(res).resolves.toMatchObject({
     data: {
       data: { a: 1 },
       files: {},
-      headers: { 'Content-Type': APPLICATION_JSON },
+      headers: { [CONTENT_TYPE]: APPLICATION_JSON },
       method: 'POST',
       url: '/test',
     },
@@ -69,7 +69,7 @@ test(`send with form`, async () => {
     method: 'POST',
     url: '/test',
     headers: {
-      'Content-Type': WWW_FORM_URLENCODED,
+      [CONTENT_TYPE]: WWW_FORM_URLENCODED,
     },
     data: { a: 1 },
   });
@@ -77,7 +77,7 @@ test(`send with form`, async () => {
     data: {
       data: 'a=1',
       files: {},
-      headers: { 'Content-Type': WWW_FORM_URLENCODED },
+      headers: { [CONTENT_TYPE]: WWW_FORM_URLENCODED },
       method: 'POST',
       url: '/test',
     },
@@ -91,7 +91,7 @@ test(`send with multipart`, async () => {
     method: 'POST',
     url: '/test',
     headers: {
-      'Content-Type': MULTIPART_FORM_DATA,
+      [CONTENT_TYPE]: MULTIPART_FORM_DATA,
     },
     data: { a: 1 },
   });
@@ -99,7 +99,7 @@ test(`send with multipart`, async () => {
     data: {
       data: { a: '1' },
       files: {},
-      headers: { 'Content-Type': `${MULTIPART_FORM_DATA}; boundary=----WebKitFormBoundaryHehehehe` },
+      headers: { [CONTENT_TYPE]: `${MULTIPART_FORM_DATA}; boundary=----WebKitFormBoundaryHehehehe` },
       method: 'POST',
       url: '/test',
     },

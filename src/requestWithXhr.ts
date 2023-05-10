@@ -5,7 +5,7 @@ import { buildQs } from './utils/buildQs';
 import { XhrInvokeResult } from './XhrInvokeResult';
 import { ContentError, FailedToRequest } from './errors';
 import { isContentType, isMultipartFormData, isWwwFormUrlEncoded } from './utils/predicates';
-import { APPLICATION_JSON } from './constants';
+import { APPLICATION_JSON, CONTENT_TYPE } from './constants';
 import { RequestController } from './RequestController';
 
 export const requestWithXhr = <T>(
@@ -66,19 +66,19 @@ export const requestWithXhr = <T>(
     } else if (data) {
       // If the content type is not provided, use the application/json as the default.
       if (!contentType) {
-        xhr.setRequestHeader('Content-Type', APPLICATION_JSON);
+        xhr.setRequestHeader(CONTENT_TYPE, APPLICATION_JSON);
         xhr.send(JSON.stringify(data));
       }
       // Serialize the data according to the specified Content-Type.
       else if (isWwwFormUrlEncoded(contentType)) {
-        xhr.setRequestHeader('Content-Type', contentType);
+        xhr.setRequestHeader(CONTENT_TYPE, contentType);
         xhr.send(buildQs(data));
       } else if (isMultipartFormData(contentType)) {
         // The FormData provides the Content-Type with correct boundary value.
         // Do not set the Content-Type explicitly, otherwise the boundary value may be lose.
         xhr.send(buildFormData(data));
       } else {
-        xhr.setRequestHeader('Content-Type', contentType);
+        xhr.setRequestHeader(CONTENT_TYPE, contentType);
         xhr.send(JSON.stringify(data));
       }
     } else {

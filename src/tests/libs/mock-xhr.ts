@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import { readAsDataURL } from './readAsDataURL';
 import { isContentType } from '../../utils/predicates';
-import { APPLICATION_JSON, MULTIPART_FORM_DATA } from '../../constants';
+import { APPLICATION_JSON, CONTENT_TYPE, MULTIPART_FORM_DATA } from '../../constants';
 import { TextEncoder } from 'util';
 
 /**
@@ -71,7 +71,7 @@ global.XMLHttpRequest = class implements Partial<XMLHttpRequest> {
       }
     } else if (body instanceof FormData) {
       if (!Object.keys(this.headers).some(isContentType)) {
-        this.headers['Content-Type'] = `${MULTIPART_FORM_DATA}; boundary=----WebKitFormBoundaryHehehehe`;
+        this.headers[CONTENT_TYPE] = `${MULTIPART_FORM_DATA}; boundary=----WebKitFormBoundaryHehehehe`;
       }
       const temp: Record<string, unknown> = {};
       const tasks = Array.from(body, async ([k, v]) => {
@@ -112,7 +112,7 @@ global.XMLHttpRequest = class implements Partial<XMLHttpRequest> {
   }
 
   public getResponseHeader(key: string) {
-    if (key === 'Content-Type') return APPLICATION_JSON;
+    if (key === CONTENT_TYPE) return APPLICATION_JSON;
     return null;
   }
 

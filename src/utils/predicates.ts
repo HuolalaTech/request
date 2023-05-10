@@ -1,4 +1,4 @@
-import { APPLICATION_JSON, MULTIPART_FORM_DATA, WWW_FORM_URLENCODED } from '../constants';
+import { APPLICATION_JSON, CONTENT_TYPE, MULTIPART_FORM_DATA, WWW_FORM_URLENCODED } from '../constants';
 
 const createMediaTypePredicate = (ct: string) => {
   /**
@@ -31,7 +31,7 @@ export const isApplicationJson = createMediaTypePredicate(APPLICATION_JSON);
 /**
  * Detects a Content-Type string case-insesitive
  */
-export const isContentType = (key: string) => /^Content-Type$/i.test(key);
+export const isContentType = RegExp.prototype.test.bind(new RegExp(`^${CONTENT_TYPE}$`, 'i'));
 
 /**
  * Detects a MiniProgram runtime object
