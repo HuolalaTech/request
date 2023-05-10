@@ -4,7 +4,7 @@ import { FailedToRequest, request } from '..';
 type IsAny<T> = 0 extends 1 & T ? true : false;
 type IsUnknown<T> = unknown extends T ? true : false;
 
-test('basic', async () => {
+test('types', async () => {
   const { data, headers, statusCode } = await request({ method: 'GET', url: '' });
 
   const isAny: IsAny<typeof data> = false;
@@ -20,6 +20,15 @@ test('basic', async () => {
   // Assert number type
   const status: number = statusCode;
   expect(status).toBe(200);
+
+  // responseType supports empty string
+  request({ method: 'GET', url: '', responseType: '' });
+
+  // responseType supports undefined
+  request({ method: 'GET', url: '', responseType: undefined });
+
+  // responseType supports XMLHttpRequestResponseType
+  request({ method: 'GET', url: '', responseType: '' as XMLHttpRequestResponseType });
 });
 
 test('blob', async () => {

@@ -43,12 +43,22 @@ export class XhrInvokeResult<T> implements InvokeResult<T> {
     const { status, responseType } = xhr;
     this.statusCode = status;
 
-    if (responseType) {
+    // The Content-Type of the response will be ignored.
+    // Although it is not a recommended practice, some MiniProgram platforms do it,
+    // so this library is designed to be compatible with them.
+
+    // If the responseType is not "json", it could be "arraybuffer", "blob", "document", and "text",
+    // so use directlly the xhr.response as the data.
+    if (responseType && responseType !== 'json') {
       // The `response` property of the xhr object may be a getter, get it only when needed, not too early.
       this.data = xhr.response;
     } else {
       // The `responseText` property of the xhr object may be a getter, get it only when needed, not too early.
       const { responseText } = xhr;
+
+      // Attempt to parse the responseText as JSON.
+      // If the parsing fails, fall back to using the original bad JSON string as the data instead of throwing error.
+      // NOTE: This is designed to be compatible with WeChat MiniProgram.
       try {
         this.data = JSON.parse(responseText);
       } catch (error) {
