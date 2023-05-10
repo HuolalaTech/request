@@ -6,9 +6,19 @@ export interface RequestTask {
   abort(): void;
 }
 
-export interface UploadTask extends RequestTask {
-  onProgressUpdate(listener: (res: unknown) => void): void;
-  offProgressUpdate(listener: (res: unknown) => void): void;
+export interface ProgressInfo {
+  totalBytesExpectedToSend: number;
+  totalBytesSent: number;
+}
+
+export interface MyProgressInfo {
+  totalBytesExpectedToWrite: number;
+  totalBytesWritten: number;
+}
+
+export interface UploadTask<I> extends RequestTask {
+  onProgressUpdate(listener: (info: I) => void): void;
+  offProgressUpdate(listener: (info: I) => void): void;
 }
 
 export type Header = Record<string, string>;
@@ -39,7 +49,7 @@ export interface WxReq2<T = WxRes> {
 
 export interface Wx {
   request(req: WxReq1): RequestTask;
-  uploadFile(req: WxReq2): UploadTask;
+  uploadFile(req: WxReq2): UploadTask<ProgressInfo>;
 }
 
 export type Swan = Wx;
@@ -48,5 +58,5 @@ export type MyReq1 = FixMy<WxReq1<FixMy<WxRes>>>;
 
 export interface My {
   request(req: MyReq1): RequestTask;
-  uploadFile(req: WxReq2): UploadTask;
+  uploadFile(req: WxReq2): UploadTask<MyProgressInfo>;
 }

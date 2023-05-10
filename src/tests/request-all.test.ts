@@ -108,5 +108,12 @@ describe('all libs tests', () => {
       const res = await request({ ...params, responseType: 'json' });
       expect(res.data).toMatchObject(params);
     });
+
+    test(`[${name}] onUploadProgress`, async () => {
+      const onUploadProgress = jest.fn();
+      await request({ method: 'POST', url: '/test', onUploadProgress, files: { a: 'aa' } });
+      expect(onUploadProgress).toHaveBeenCalledTimes(1);
+      expect(onUploadProgress).toHaveBeenNthCalledWith(1, { total: 1000, loaded: 1000 });
+    });
   }
 });

@@ -28,6 +28,7 @@ global.XMLHttpRequest = class implements Partial<XMLHttpRequest> {
   public response: unknown;
   public responseText = '';
   public responseType: XMLHttpRequestResponseType = '';
+  public upload = new EventTarget() as XMLHttpRequestUpload;
 
   public open(method: string, url: string) {
     this.method = method;
@@ -42,6 +43,12 @@ global.XMLHttpRequest = class implements Partial<XMLHttpRequest> {
 
   public async send(body: string | FormData) {
     const { method, url, timeout, withCredentials, headers } = this;
+
+    await new Promise((f) => setTimeout(f));
+
+    const progressEvent = new ProgressEvent('progress', { loaded: 1000, total: 1000 });
+    this.upload.dispatchEvent(progressEvent);
+
     this.readyState = 3;
     this.status = Number(getHeader(headers, 'status-code')) || 200;
     this.em.emit('readystatechange');
@@ -60,7 +67,8 @@ global.XMLHttpRequest = class implements Partial<XMLHttpRequest> {
       return;
     }
 
-    await Promise.resolve();
+    await new Promise((f) => setTimeout(f));
+
     const files: Record<string, string> = {};
     let data: Record<string, unknown> | string | undefined;
     if (typeof body === 'string') {
@@ -84,7 +92,8 @@ global.XMLHttpRequest = class implements Partial<XMLHttpRequest> {
       await Promise.all(tasks);
       data = temp;
     }
-    await Promise.resolve();
+
+    await new Promise((f) => setTimeout(f));
     const raw = JSON.stringify({ method, url, timeout, withCredentials, headers, data, files });
     this.makeDone(raw);
   }

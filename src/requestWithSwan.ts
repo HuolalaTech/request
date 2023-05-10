@@ -16,7 +16,7 @@ const convertResponseType = (responseType?: InvokeParams['responseType']) => {
 
 export const requestWithSwan = <T>(args: InvokeParams, controller: RequestController = new RequestController()) =>
   new Promise<InvokeResult<T>>((resolve, reject) => {
-    const { headers, files, data, responseType, ...rest } = args;
+    const { headers, files, data, responseType, onUploadProgress, ...rest } = args;
     const fileNames = files ? Object.keys(files) : [];
 
     const fail = (obj: unknown) => {
@@ -57,6 +57,12 @@ export const requestWithSwan = <T>(args: InvokeParams, controller: RequestContro
           success: ({ header, data, ...rest }) => resolve({ headers: header, data: data as T, ...rest }),
           fail,
         });
+        // Bind onUploadProgress event.
+        if (onUploadProgress)
+          task.onProgressUpdate((e) => {
+            onUploadProgress({ loaded: e.totalBytesSent, total: e.totalBytesExpectedToSend });
+          });
+        // Bind abort event.
         controller.abort = () => task.abort();
       } else {
         throw new BatchUploadError();

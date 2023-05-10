@@ -9,7 +9,17 @@ import { APPLICATION_JSON, CONTENT_TYPE } from './constants';
 import { RequestController } from './RequestController';
 
 export const requestWithXhr = <T>(
-  { method, url, data, timeout, headers, files = {}, responseType, withCredentials = true }: InvokeParams,
+  {
+    method,
+    url,
+    data,
+    timeout,
+    headers,
+    files = {},
+    responseType,
+    withCredentials = true,
+    onUploadProgress,
+  }: InvokeParams,
   controller: RequestController = new RequestController(),
 ) => {
   return new Promise<InvokeResult<T>>((resolve, reject) => {
@@ -84,6 +94,12 @@ export const requestWithXhr = <T>(
     } else {
       xhr.send();
     }
+    // Bind onUploadProgress event.
+    if (onUploadProgress)
+      xhr.upload.addEventListener('progress', ({ total, loaded }) => {
+        onUploadProgress({ loaded, total });
+      });
+    // Bind abort event.
     controller.abort = () => xhr.abort();
   });
 };

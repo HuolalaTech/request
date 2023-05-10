@@ -57,4 +57,9 @@ export interface InvokeParams {
    * @default true
    */
   withCredentials?: boolean;
+
+  /**
+   * A handler function that trigger on uploading progress update.
+   */
+  onUploadProgress?: (progress: { total: number; loaded: number }) => void;
 }
