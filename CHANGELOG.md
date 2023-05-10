@@ -1,6 +1,16 @@
+## 1.0.7
+
+- Update README.md
+- Support onUploadProgress
+- Extract const CONTENT_TYPE
+- Fix entry types
+
 ## 1.0.6
 
 - Update dependencies
+- Fix xhr abort logic
+- Add test cases for RequestController
+- Support AbortablePromise
 - Fix overrided entry function
 
 ## 1.0.5
