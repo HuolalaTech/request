@@ -34,6 +34,12 @@ export const requestWithXhr = <T>(
     xhr.addEventListener('error', errorHandler);
     xhr.addEventListener('load', () => resolve(new XhrInvokeResult(xhr)));
 
+    // Bind onUploadProgress event.
+    if (onUploadProgress)
+      xhr.upload.addEventListener('progress', ({ total, loaded }) => {
+        onUploadProgress({ loaded, total });
+      });
+
     xhr.open(method, url, true);
     xhr.withCredentials = withCredentials;
 
@@ -94,11 +100,6 @@ export const requestWithXhr = <T>(
     } else {
       xhr.send();
     }
-    // Bind onUploadProgress event.
-    if (onUploadProgress)
-      xhr.upload.addEventListener('progress', ({ total, loaded }) => {
-        onUploadProgress({ loaded, total });
-      });
     // Bind abort event.
     controller.abort = () => xhr.abort();
   });
