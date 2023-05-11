@@ -5,8 +5,10 @@ import { requestWithSwan } from './requestWithSwan';
 import { requestWithWx } from './requestWithWx';
 import { requestWithXhr } from './requestWithXhr';
 import { InvokeParams } from './types/InvokeParams';
-import { Wx, My, Swan } from './types/libs';
-import { isValidMPO } from './utils/predicates';
+import { My } from './types/My';
+import { Swan } from './types/Swan';
+import { Wx } from './types/Wx';
+import { isValidMPO as isValidMpo } from './utils/predicates';
 
 declare const wx: Wx;
 declare const my: My;
@@ -20,11 +22,11 @@ export const internalRequest = <T>(args: InvokeParams, controller?: RequestContr
     case typeof XMLHttpRequest === 'function' && typeof document === 'object' && document !== null:
       return requestWithXhr<T>(args, controller);
 
-    case typeof wx === 'object' && isValidMPO(wx):
+    case typeof wx === 'object' && isValidMpo(wx):
       return requestWithWx<T>(args, controller);
-    case typeof my === 'object' && isValidMPO(my):
+    case typeof my === 'object' && isValidMpo(my):
       return requestWithMy<T>(args, controller);
-    case typeof swan === 'object' && isValidMPO(swan):
+    case typeof swan === 'object' && isValidMpo(swan):
       return requestWithSwan<T>(args, controller);
 
     // If none of the MiniProgram platforms match, we can fallback to using an XMLHttpRequest if it exists.

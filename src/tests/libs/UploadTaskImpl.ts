@@ -1,5 +1,6 @@
 import { RequestController } from '../../RequestController';
-import type { MyProgressInfo, ProgressInfo, UploadTask } from '../../types/libs';
+import { MyProgressInfo } from '../../types/My';
+import type { ProgressInfo, UploadTask } from '../../types/common';
 
 type Info = ProgressInfo & MyProgressInfo;
 

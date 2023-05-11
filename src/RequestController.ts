@@ -1,6 +1,4 @@
-export interface Abortable {
-  abort: () => void;
-}
+import { Abortable } from './types/Abortable';
 
 export type AbortablePromise<T> = Promise<T> & Abortable;
 

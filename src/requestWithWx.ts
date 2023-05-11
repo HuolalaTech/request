@@ -1,15 +1,16 @@
 import { InvokeResult } from './types/InvokeResult';
 import { InvokeParams } from './types/InvokeParams';
-import { Wx } from './types/libs';
 import { BatchUploadError, MiniProgramError } from './errors';
 import { RequestController } from './RequestController';
+import { Wx } from './types/Wx';
 
 declare const wx: Wx;
 
 const convertResponseType = (responseType?: InvokeParams['responseType']) => {
   if (!responseType) return {};
-  if (responseType === 'arraybuffer') return { responseType };
-  if (responseType === 'json' || responseType === 'text') return { dataType: responseType };
+  if (responseType === 'arraybuffer') return { responseType } as const;
+  if (responseType === 'json') return { dataType: 'json' } as const;
+  if (responseType === 'text') return { dataType: 'string' } as const;
   throw new TypeError(`The responseType "${responseType}" is not supported by WeChat Miniprogram`);
 };
 

@@ -1,15 +1,15 @@
 import { InvokeResult } from './types/InvokeResult';
 import { InvokeParams } from './types/InvokeParams';
-import { My } from './types/libs';
 import { BatchUploadError, MiniProgramError } from './errors';
 import { RequestController } from './RequestController';
+import { My } from './types/My';
 
 declare const my: My;
 
 const convertResponseType = (responseType?: InvokeParams['responseType']) => {
   if (!responseType) return {};
-  if (responseType === 'arraybuffer') return { dataType: 'arraybuffer' };
-  if (responseType === 'json' || responseType === 'text') return { dataType: responseType };
+  if (responseType === 'arraybuffer') return { dataType: 'arraybuffer' } as const;
+  if (responseType === 'json' || responseType === 'text') return { dataType: responseType } as const;
   throw new TypeError(`The responseType "${responseType}" is not supported by Alipay Miniprogram`);
 };
 

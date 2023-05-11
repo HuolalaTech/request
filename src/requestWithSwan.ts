@@ -1,17 +1,17 @@
 import { InvokeResult } from './types/InvokeResult';
 import { InvokeParams } from './types/InvokeParams';
-import type { Wx } from './types/libs';
 import { BatchUploadError, MiniProgramError } from './errors';
 import { RequestController } from './RequestController';
+import { Swan } from './types/Swan';
 
-declare const swan: Wx;
+declare const swan: Swan;
 
 const convertResponseType = (responseType?: InvokeParams['responseType']) => {
   if (!responseType) return {};
-  if (responseType === 'arraybuffer') return { responseType };
-  if (responseType === 'json') return { dataType: 'json' };
-  if (responseType === 'text') return { dataType: 'string' };
-  throw new TypeError(`The responseType "${responseType}" is not supported by WeChat Miniprogram`);
+  if (responseType === 'arraybuffer') return { responseType } as const;
+  if (responseType === 'json') return { dataType: 'json' } as const;
+  if (responseType === 'text') return { dataType: 'string' } as const;
+  throw new TypeError(`The responseType "${responseType}" is not supported by Baidu Miniprogram`);
 };
 
 export const requestWithSwan = <T>(args: InvokeParams, controller: RequestController = new RequestController()) =>

@@ -1,8 +1,9 @@
 import { TextEncoder } from 'util';
+import { BaseMpo } from '../../types/common';
 
 const stringify = (data: unknown) => (typeof data !== 'string' ? JSON.stringify(data) : data);
 
-export abstract class BaseMPO {
+export abstract class BaseMpoImpl implements BaseMpo {
   canIUse(name: string) {
     if (name === 'request') return true;
     return false;

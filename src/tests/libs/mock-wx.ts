@@ -1,11 +1,12 @@
 import { RequestController } from '../../RequestController';
-import type { Wx, WxReq1, WxReq2 } from '../../types/libs';
+import type { RequestParams, UploadParams } from '../../types/common';
+import type { Wx } from '../../types/Wx';
 import { UploadTaskImpl } from './UploadTaskImpl';
-import { BaseMPO } from './mock-base';
+import { BaseMpoImpl } from './BaseMpoImpl';
 import { readAsDataURL } from './readAsDataURL';
 
-class WxConstructor extends BaseMPO implements Wx {
-  request(req: WxReq1) {
+class WxConstructor extends BaseMpoImpl implements Wx {
+  request(req: RequestParams) {
     const task = new RequestController();
     const timer = setTimeout(async () => {
       const { header, ...rest } = req;
@@ -26,7 +27,7 @@ class WxConstructor extends BaseMPO implements Wx {
     };
     return task;
   }
-  uploadFile(req: WxReq2) {
+  uploadFile(req: UploadParams) {
     const task = new UploadTaskImpl();
     const timer = setTimeout(async () => {
       const { header, name, filePath, formData, ...rest } = req;
