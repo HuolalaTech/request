@@ -1,3 +1,10 @@
+## 1.0.8
+
+- Support DouYin MiniProgram
+- Refactor types
+- Update dependencies
+- Fix progress listener adding timing
+
 ## 1.0.7
 
 - Update README.md
