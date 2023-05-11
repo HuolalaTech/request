@@ -7,13 +7,16 @@ import { TextDecoder } from 'util';
 import './libs/mock-xhr';
 import './libs/mock-wx';
 import './libs/mock-my';
+import './libs/mock-tt';
 import './libs/mock-swan';
+import { requestWithTt } from '../requestWithTt';
 
 describe('all libs tests', () => {
   for (const [name, request] of [
     ['xhr', requestWithXhr],
     ['wx', requestWithWx],
     ['my', requestWithMy],
+    ['tt', requestWithTt],
     ['swan', requestWithSwan],
   ] as const) {
     test(`[${name}] basic`, async () => {

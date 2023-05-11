@@ -2,6 +2,7 @@ import { RequestController } from './RequestController';
 import { PlatformError } from './errors';
 import { requestWithMy } from './requestWithMy';
 import { requestWithSwan } from './requestWithSwan';
+import { requestWithTt } from './requestWithTt';
 import { requestWithWx } from './requestWithWx';
 import { requestWithXhr } from './requestWithXhr';
 import { InvokeParams } from './types/InvokeParams';
@@ -13,6 +14,7 @@ import { isValidMPO as isValidMpo } from './utils/predicates';
 declare const wx: Wx;
 declare const my: My;
 declare const swan: Swan;
+declare const tt: Swan;
 
 export const internalRequest = <T>(args: InvokeParams, controller?: RequestController) => {
   // Detect the current platform and call the corresponding method.
@@ -26,6 +28,8 @@ export const internalRequest = <T>(args: InvokeParams, controller?: RequestContr
       return requestWithWx<T>(args, controller);
     case typeof my === 'object' && isValidMpo(my):
       return requestWithMy<T>(args, controller);
+    case typeof tt === 'object' && isValidMpo(tt):
+      return requestWithTt<T>(args, controller);
     case typeof swan === 'object' && isValidMpo(swan):
       return requestWithSwan<T>(args, controller);
 

@@ -8,11 +8,13 @@ import './libs/mock-wx';
 import './libs/mock-my';
 import './libs/mock-swan';
 import { BatchUploadError } from '../errors';
+import { requestWithTt } from '../requestWithTt';
 
 describe('all libs tests', () => {
   for (const [name, request] of [
     ['wx', requestWithWx],
     ['my', requestWithMy],
+    ['tt', requestWithTt],
     ['swan', requestWithSwan],
   ] as const) {
     test(`[${name}] batch upload error`, async () => {

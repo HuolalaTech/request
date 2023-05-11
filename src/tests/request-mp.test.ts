@@ -4,14 +4,17 @@ import { requestWithSwan } from '../requestWithSwan';
 
 import './libs/mock-wx';
 import './libs/mock-my';
+import './libs/mock-tt';
 import './libs/mock-swan';
 import { MiniProgramError } from '../errors';
 import { RequestController } from '../RequestController';
+import { requestWithTt } from '../requestWithTt';
 
 describe('all libs tests', () => {
   for (const [name, request] of [
     ['wx', requestWithWx],
     ['my', requestWithMy],
+    ['tt', requestWithTt],
     ['swan', requestWithSwan],
   ] as const) {
     test(`[${name}] fail`, async () => {
