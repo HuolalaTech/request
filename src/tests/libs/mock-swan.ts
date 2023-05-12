@@ -1,13 +1,12 @@
-import { RequestController } from '../../RequestController';
 import type { RequestParams, UploadParams } from '../../types/common';
 import type { Swan } from '../../types/Swan';
 import { UploadTaskImpl } from './UploadTaskImpl';
 import { BaseMpoImpl } from './BaseMpoImpl';
 import { readAsDataURL } from './readAsDataURL';
+import { RequestTaskImpl } from './RequestTaskImpl';
 
 class SwanConstructor extends BaseMpoImpl implements Swan {
   request(req: RequestParams) {
-    const task = new RequestController();
     const timer = setTimeout(async () => {
       const { header, ...rest } = req;
       const { code, msg } = Object(header);
@@ -19,16 +18,13 @@ class SwanConstructor extends BaseMpoImpl implements Swan {
         header: { server: 'mock' },
         data: this.makeData({ ...rest, headers: header }, rest.dataType || rest.responseType),
       });
-      task.abort = () => undefined;
     });
-    task.abort = () => {
+    return new RequestTaskImpl(() => {
       clearTimeout(timer);
       if (req.fail) req.fail({ errMsg: 'request:fail abort' });
-    };
-    return task;
+    });
   }
   uploadFile(req: UploadParams) {
-    const task = new UploadTaskImpl();
     const timer = setTimeout(async () => {
       const { header, name, filePath, formData, ...rest } = req;
       req.success({
@@ -41,13 +37,11 @@ class SwanConstructor extends BaseMpoImpl implements Swan {
           files: { [name]: await readAsDataURL(filePath) },
         },
       });
-      task.abort = () => undefined;
-    });
-    task.abort = () => {
+    }, 100);
+    return new UploadTaskImpl(() => {
       clearTimeout(timer);
       if (req.fail) req.fail({ errMsg: 'request:fail abort' });
-    };
-    return task;
+    });
   }
 }
 

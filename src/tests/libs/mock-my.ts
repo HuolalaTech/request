@@ -1,13 +1,12 @@
-import { RequestController } from '../../RequestController';
 import type { UploadParams } from '../../types/common';
 import type { My, MyRequestParams } from '../../types/My';
 import { UploadTaskImpl } from './UploadTaskImpl';
 import { BaseMpoImpl } from './BaseMpoImpl';
 import { readAsDataURL } from './readAsDataURL';
+import { RequestTaskImpl } from './RequestTaskImpl';
 
 class MyConstructor extends BaseMpoImpl implements My {
   request(req: MyRequestParams) {
-    const task = new RequestController();
     const timer = setTimeout(async () => {
       const { headers, ...rest } = req;
       const { code, msg } = Object(headers);
@@ -19,16 +18,13 @@ class MyConstructor extends BaseMpoImpl implements My {
         headers: { server: 'mock' },
         data: this.makeData({ ...rest, headers }, rest.dataType),
       });
-      task.abort = () => undefined;
     });
-    task.abort = () => {
+    return new RequestTaskImpl(() => {
       clearTimeout(timer);
       if (req.fail) req.fail({ errMsg: 'request:fail abort' });
-    };
-    return task;
+    });
   }
   uploadFile(req: UploadParams) {
-    const task = new UploadTaskImpl();
     const timer = setTimeout(async () => {
       const { header, name, filePath, formData, ...rest } = req;
       req.success({
@@ -41,13 +37,11 @@ class MyConstructor extends BaseMpoImpl implements My {
           files: { [name]: await readAsDataURL(filePath) },
         },
       });
-      task.abort = () => undefined;
-    });
-    task.abort = () => {
+    }, 100);
+    return new UploadTaskImpl(() => {
       clearTimeout(timer);
       if (req.fail) req.fail({ errMsg: 'request:fail abort' });
-    };
-    return task;
+    });
   }
 }
 

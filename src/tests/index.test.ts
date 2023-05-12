@@ -50,7 +50,8 @@ test('text', async () => {
 });
 
 test('abort', async () => {
-  const req = request({ method: 'GET', url: '', responseType: 'text' });
-  req.abort();
+  const a = new AbortController();
+  const req = request({ method: 'GET', url: '', responseType: 'text', signal: a.signal });
+  a.abort();
   expect(req).rejects.toBeInstanceOf(FailedToRequest);
 });

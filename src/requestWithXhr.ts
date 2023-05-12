@@ -6,22 +6,19 @@ import { XhrInvokeResult } from './XhrInvokeResult';
 import { ContentError, FailedToRequest } from './errors';
 import { isContentType, isMultipartFormData, isWwwFormUrlEncoded } from './utils/predicates';
 import { APPLICATION_JSON, CONTENT_TYPE } from './constants';
-import { RequestController } from './RequestController';
 
-export const requestWithXhr = <T>(
-  {
-    method,
-    url,
-    data,
-    timeout,
-    headers,
-    files = {},
-    responseType,
-    withCredentials = true,
-    onUploadProgress,
-  }: InvokeParams,
-  controller: RequestController = new RequestController(),
-) => {
+export const requestWithXhr = <T>({
+  method,
+  url,
+  data,
+  timeout,
+  headers,
+  files = {},
+  responseType,
+  withCredentials = true,
+  signal,
+  onUploadProgress,
+}: InvokeParams) => {
   return new Promise<InvokeResult<T>>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
 
@@ -101,6 +98,6 @@ export const requestWithXhr = <T>(
       xhr.send();
     }
     // Bind abort event.
-    controller.abort = () => xhr.abort();
+    signal?.addEventListener('abort', () => xhr.abort());
   });
 };

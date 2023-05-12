@@ -40,14 +40,14 @@ describe('all libs tests', () => {
 
     test(`[${name}] abort`, async () => {
       const controller = new RequestController();
-      const req = request({ method: 'GET', url: '/test' }, controller);
+      const req = request({ method: 'GET', url: '/test', signal: controller.signal });
       controller.abort();
       expect(req).rejects.toBeInstanceOf(MiniProgramError);
     });
 
     test(`[${name}] abort upload`, async () => {
       const controller = new RequestController();
-      const req = request({ method: 'GET', url: '/test', files: { f1: 'hehe' } }, controller);
+      const req = request({ method: 'GET', url: '/test', files: { f1: 'hehe' }, signal: controller.signal });
       controller.abort();
       expect(req).rejects.toBeInstanceOf(MiniProgramError);
     });

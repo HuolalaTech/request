@@ -132,7 +132,7 @@ test(`timeout`, async () => {
 test(`abort`, async () => {
   const params = { method: 'GET', url: '/test' };
   const controller = new RequestController();
-  const req = requestWithXhr({ ...params, responseType: 'json' }, controller);
+  const req = requestWithXhr({ ...params, responseType: 'json', signal: controller.signal });
   controller.abort();
   expect(req).rejects.toBeInstanceOf(FailedToRequest);
 });

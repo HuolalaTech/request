@@ -1,11 +1,13 @@
-import { Abortable } from './Abortable';
-
 export interface ProgressInfo {
   totalBytesExpectedToSend: number;
   totalBytesSent: number;
 }
 
-export interface UploadTask<I> extends Abortable {
+export interface RequestTask {
+  abort(): void;
+}
+
+export interface UploadTask<I> extends RequestTask {
   onProgressUpdate(listener: (info: I) => void): void;
   offProgressUpdate(listener: (info: I) => void): void;
 }

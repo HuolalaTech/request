@@ -26,6 +26,7 @@ npm install @huolala-tech/request --save
 | files             | Record\<string, Blob \| File \| string\>          | Payload files                           |
 | responseType      | text \| json \| arraybuffer \| blob \| document   | Response type                           |
 | withCredentials   | boolean                                           | The withCredentials flag for XHR object |
+| signal            | AbortSignal                                       | An abort signal like fetch              |
 | onUploadProgress  | (info: { total: number, loaded: number }) => void | The uploading progress event            |
 
 > NOTE 1: The `method` field
@@ -46,7 +47,7 @@ npm install @huolala-tech/request --save
 >
 > 1. This can only be used on browser.
 
-## Return Promise<InvokeResult<T>> & { abort: () => void }
+## Return Promise<InvokeResult<T>>
 
 The InvokeResult is
 

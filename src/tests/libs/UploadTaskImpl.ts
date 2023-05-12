@@ -1,12 +1,12 @@
-import { RequestController } from '../../RequestController';
 import { MyProgressInfo } from '../../types/My';
 import type { ProgressInfo, UploadTask } from '../../types/common';
+import { RequestTaskImpl } from './RequestTaskImpl';
 
 type Info = ProgressInfo & MyProgressInfo;
 
-export class UploadTaskImpl extends RequestController implements UploadTask<Info> {
-  constructor() {
-    super();
+export class UploadTaskImpl extends RequestTaskImpl implements UploadTask<Info> {
+  constructor(abort: () => void) {
+    super(abort);
     setTimeout(() => {
       UploadTaskImpl.dispatch(this, 1000, 1000);
     });

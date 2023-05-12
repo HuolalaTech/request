@@ -1,44 +1,52 @@
-import { Abortable } from './types/Abortable';
+class RequestAbortSignal implements AbortSignal {
+  private listeners: Record<string, ((e: Event) => void)[]>;
+  private et: EventTarget;
 
-export type AbortablePromise<T> = Promise<T> & Abortable;
-
-export class RequestController implements Abortable {
-  private isAborted;
-  private readonly triggerAbort: () => void;
-  private abortHandler?: () => void;
+  public onabort: ((this: AbortSignal, ev: Event) => void) | null;
+  public readonly aborted: boolean;
+  public readonly reason: unknown;
 
   constructor() {
-    this.isAborted = false;
-    /**
-     * Why is this function defined as a property rather than a method?
-     * Because a method is actually defined on the prototype, which depends on the "this" context.
-     * However, this function needs to bind the current "this" as it may be called in an unknown context.
-     */
-    this.triggerAbort = () => {
-      if (this.isAborted) return;
-      this.isAborted = true;
-      if (this.abortHandler) this.abortHandler();
-    };
+    this.et = new EventTarget();
+    this.listeners = Object.create(null);
+    this.onabort = null;
+    this.aborted = false;
+    this.reason = undefined;
+
+    this.addEventListener('abort', (e) => {
+      if (this.onabort) this.onabort(e);
+    });
   }
 
-  public set abort(handler) {
-    this.abortHandler = handler;
-    // The handler can be set after an abort, at which point call the handler immediately.
-    if (this.isAborted) handler();
+  public addEventListener(type: 'abort', listener: (e: Event) => void): void {
+    this.et.addEventListener(type, listener);
   }
 
-  /**
-   * NOTE: A ReqeustController object always return same instance when get the "abort".
-   */
-  public get abort() {
-    return this.triggerAbort;
+  public removeEventListener(type: 'abort', listener: (e: Event) => void): void {
+    this.et.removeEventListener(type, listener);
+  }
+
+  public dispatchEvent(event: Event): boolean {
+    return this.et.dispatchEvent(event);
+  }
+
+  public throwIfAborted(): void {
+    if (this.aborted) throw this.reason;
   }
 }
 
-export function injectAbortable<T>(
-  target: Promise<T>,
-  controller: RequestController,
-): asserts target is AbortablePromise<T> {
-  const { abort } = controller;
-  Object.defineProperty(target, 'abort', { configurable: true, value: abort });
+export class RequestController implements AbortController {
+  constructor() {
+    this.signal = new RequestAbortSignal();
+  }
+  public abort(reason?: unknown): void {
+    const { signal } = this;
+    if (signal.aborted) return;
+    Object.defineProperties(signal, {
+      aborted: { configurable: true, enumerable: true, value: true },
+      reason: { configurable: true, enumerable: true, value: reason ?? new Error('signal is aborted without reason') },
+    });
+    this.signal.dispatchEvent(new Event('abort'));
+  }
+  public readonly signal: AbortSignal;
 }

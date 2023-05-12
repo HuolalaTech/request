@@ -1,5 +1,4 @@
-import { Abortable } from './Abortable';
-import { UploadParams, UploadTask, RequestParams, Header, Response, BaseMpo } from './common';
+import { UploadParams, UploadTask, RequestParams, Header, Response, BaseMpo, RequestTask } from './common';
 
 export interface MyProgressInfo {
   totalBytesExpectedToWrite: number;
@@ -16,6 +15,6 @@ export interface MyRequestParams extends Omit<RequestParams<MyResponse>, 'header
 }
 
 export interface My extends BaseMpo {
-  request(req: MyRequestParams): Abortable;
+  request(req: MyRequestParams): RequestTask;
   uploadFile(req: UploadParams): UploadTask<MyProgressInfo>;
 }

@@ -3,10 +3,10 @@ import { InvokeContext } from './types/InvokeContext';
 import { Interceptor } from './Interceptor';
 import type { InvokeParams } from './types/InvokeParams';
 import type { InvokeResult } from './types/InvokeResult';
-import { AbortablePromise, RequestController, injectAbortable } from './RequestController';
 
 export * from './errors';
 export * from './constants';
+export * from './RequestController';
 
 export { isApplicationJson, isMultipartFormData, isWwwFormUrlEncoded } from './utils/predicates';
 
@@ -29,7 +29,7 @@ export const interceptors = {
  * 3. If JSON parsing fails, an error will not be thrown.
  *    Instead, the original bad JSON will be provided as a string.
  */
-export function request<T>(args: InvokeParams & { responseType?: 'json' | '' }): AbortablePromise<InvokeResult<T>>;
+export function request<T>(args: InvokeParams & { responseType?: 'json' | '' }): Promise<InvokeResult<T>>;
 
 /**
  * Send an HTTP request and receive the result in an arraybuffer.
@@ -41,7 +41,7 @@ export function request<T>(args: InvokeParams & { responseType?: 'json' | '' }):
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function request<T extends ArrayBuffer = ArrayBuffer>(
   args: InvokeParams & { responseType: 'arraybuffer' },
-): AbortablePromise<InvokeResult<ArrayBuffer>>;
+): Promise<InvokeResult<ArrayBuffer>>;
 
 /**
  * Send an HTTP request and receive the result as a string.
@@ -53,7 +53,7 @@ export function request<T extends ArrayBuffer = ArrayBuffer>(
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function request<T extends string = string>(
   args: InvokeParams & { responseType: 'text' },
-): AbortablePromise<InvokeResult<string>>;
+): Promise<InvokeResult<string>>;
 
 /**
  * Send an HTTP request and receive the result as a Blob object.
@@ -66,7 +66,7 @@ export function request<T extends string = string>(
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function request<T extends Blob = Blob>(
   args: InvokeParams & { responseType: 'blob' },
-): AbortablePromise<InvokeResult<Blob>>;
+): Promise<InvokeResult<Blob>>;
 
 /**
  * Send an HTTP request.
@@ -77,25 +77,20 @@ export function request<T extends Blob = Blob>(
  *    Although it is not a recommended practice, some MiniProgram platforms do it,
  *    so this library is designed to be compatible with them.
  */
-export function request<T>(args: InvokeParams): AbortablePromise<InvokeResult<T>>;
+export function request<T>(args: InvokeParams): Promise<InvokeResult<T>>;
 
 export function request(args: InvokeParams) {
   const { request, response } = interceptors;
   const context: InvokeContext = {};
   // Execute request handlers as a pipeline.
-  const controller = new RequestController();
-  let task = Interceptor.pipeline(request, Promise.resolve(args)).then((params) => {
+  const task = Interceptor.pipeline(request, Promise.resolve(args)).then((params) => {
     // Update the context that may be used by response handlers.
     context.request = params;
     // Call the internal request method.
-    return internalRequest(params, controller);
+    return internalRequest(params);
   });
   // Execute response handlers as a pipeline.
-  task = Interceptor.pipeline(response, task, context);
-
-  injectAbortable(task, controller);
-
-  return task;
+  return Interceptor.pipeline(response, task, context);
 }
 
 // Find the globalThis object across browsers and miniprogram platforms.

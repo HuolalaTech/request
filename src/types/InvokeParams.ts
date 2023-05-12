@@ -59,6 +59,11 @@ export interface InvokeParams {
   withCredentials?: boolean;
 
   /**
+   * An object that implemented the AbortSignal interface.
+   */
+  signal?: AbortSignal;
+
+  /**
    * A handler function that trigger on uploading progress update.
    */
   onUploadProgress?: (progress: { total: number; loaded: number }) => void;

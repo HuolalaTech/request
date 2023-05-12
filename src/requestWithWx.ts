@@ -1,7 +1,6 @@
 import { InvokeResult } from './types/InvokeResult';
 import { InvokeParams } from './types/InvokeParams';
 import { BatchUploadError, MiniProgramError } from './errors';
-import { RequestController } from './RequestController';
 import { Wx } from './types/Wx';
 
 declare const wx: Wx;
@@ -14,9 +13,9 @@ const convertResponseType = (responseType?: InvokeParams['responseType']) => {
   throw new TypeError(`The responseType "${responseType}" is not supported by WeChat Miniprogram`);
 };
 
-export const requestWithWx = <T>(args: InvokeParams, controller: RequestController = new RequestController()) =>
+export const requestWithWx = <T>(args: InvokeParams) =>
   new Promise<InvokeResult<T>>((resolve, reject) => {
-    const { headers, files, data, responseType, onUploadProgress, ...rest } = args;
+    const { headers, files, data, responseType, onUploadProgress, signal, ...rest } = args;
     const fileNames = files ? Object.keys(files) : [];
 
     const fail = (obj: unknown) => {
@@ -40,7 +39,7 @@ export const requestWithWx = <T>(args: InvokeParams, controller: RequestControll
           success: ({ header, data, ...rest }) => resolve({ ...rest, headers: header, data: data as T }),
           fail,
         });
-        controller.abort = () => task.abort();
+        signal?.addEventListener('abort', () => task.abort());
       } else if (files && fileNames.length === 1) {
         if (responseType) {
           throw new TypeError('The `responseType` is not supported if `files` not empty in WeChat Miniprogram');
@@ -65,7 +64,7 @@ export const requestWithWx = <T>(args: InvokeParams, controller: RequestControll
             onUploadProgress({ loaded: e.totalBytesSent, total: e.totalBytesExpectedToSend });
           });
         // Bind abort event.
-        controller.abort = () => task.abort();
+        signal?.addEventListener('abort', () => task.abort());
       } else {
         throw new BatchUploadError();
       }
