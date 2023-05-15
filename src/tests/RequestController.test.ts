@@ -1,3 +1,4 @@
+import { CustomError } from '@huolala-tech/custom-error';
 import { RequestController } from '../RequestController';
 
 test('double abort', () => {
@@ -46,4 +47,15 @@ test('throwIfAborted', () => {
   expect(() => {
     signal.throwIfAborted();
   }).toThrowError();
+});
+
+test('reason', () => {
+  class MyError extends CustomError {}
+  const rc = new RequestController();
+  const handler = jest.fn(() => {
+    expect(rc.signal.reason).toBeInstanceOf(MyError);
+  });
+  rc.signal.addEventListener('abort', handler);
+  rc.abort(new MyError());
+  expect(handler).toBeCalledTimes(1);
 });
