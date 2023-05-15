@@ -1,3 +1,10 @@
+## 1.1.0
+
+- Fix test coverage
+- Remove unused code
+- Remove AbortedPromise and use AbortSignal instead
+- Update tsconfig
+
 ## 1.0.8
 
 - Support DouYin MiniProgram
