@@ -60,6 +60,8 @@ export interface InvokeParams {
 
   /**
    * An object that implemented the AbortSignal interface.
+   * NOTE: If your environment cannot support the AbortController,
+   *       you can use RequestControler from this package instread.
    */
   signal?: AbortSignal;
 

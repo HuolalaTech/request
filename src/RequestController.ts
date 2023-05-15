@@ -1,6 +1,5 @@
 class RequestAbortSignal implements AbortSignal {
-  private listeners: Record<string, ((e: Event) => void)[]>;
-  private et: EventTarget;
+  private readonly et: EventTarget;
 
   public onabort: ((this: AbortSignal, ev: Event) => void) | null;
   public readonly aborted: boolean;
@@ -8,7 +7,6 @@ class RequestAbortSignal implements AbortSignal {
 
   constructor() {
     this.et = new EventTarget();
-    this.listeners = Object.create(null);
     this.onabort = null;
     this.aborted = false;
     this.reason = undefined;
