@@ -33,6 +33,10 @@ export const isApplicationJson = createMediaTypePredicate(APPLICATION_JSON);
  */
 export const isContentType = RegExp.prototype.test.bind(new RegExp(`^${CONTENT_TYPE}$`, 'i'));
 
+export const isRecord = (u: unknown): u is Record<PropertyKey, unknown> => typeof u === 'object' && u !== null;
+
+export const isArray = (u: unknown): u is unknown[] => Object.prototype.toString.call(u) === '[object Array]';
+
 /**
  * Detects a MiniProgram runtime object
  */

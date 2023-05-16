@@ -1,6 +1,6 @@
+import { makeArray } from './makeArray';
+import { isRecord } from './predicates';
 import { toDataString } from './toDataString';
-
-const isRecord = (u: unknown): u is Record<PropertyKey, unknown> => typeof u === 'object' && u !== null;
 
 export class QueryStringBuilder {
   private items: string[];
@@ -8,22 +8,13 @@ export class QueryStringBuilder {
   constructor(data?: unknown) {
     this.items = [];
     if (isRecord(data)) {
-      const keys = Object.keys(data);
-      for (let i = 0; i < keys.length; i++) {
-        const key = keys[i];
-        const value = data[key];
+      Object.keys(data).forEach((key) => {
         // If a top-level value is an array, append multiple times to the same key.
         // For example, { a: [ 1, 2 ] } will be converted to a=1&a=2.
         // NOTE: this rule is only applied to top-level arrays, nested arrays are converted to JSON.
         //       For example, { a: [ 1, 2, [ 3, 4 ] ] } will be converted to a=1&a=2&a=[3,4].
-        if (value instanceof Array) {
-          for (let j = 0; j < value.length; j++) {
-            this.append(key, value[j]);
-          }
-        } else {
-          this.append(key, value);
-        }
-      }
+        makeArray(data[key]).forEach((value) => this.append(key, value));
+      });
     }
   }
 
