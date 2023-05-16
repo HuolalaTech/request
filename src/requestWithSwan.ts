@@ -2,6 +2,7 @@ import { InvokeResult } from './types/InvokeResult';
 import { InvokeParams } from './types/InvokeParams';
 import { BatchUploadError, MiniProgramError } from './errors';
 import { Swan } from './types/Swan';
+import { fixInvokeParams } from './utils/fixInvokeParams';
 
 declare const swan: Swan;
 
@@ -15,7 +16,7 @@ const convertResponseType = (responseType?: InvokeParams['responseType']) => {
 
 export const requestWithSwan = <T>(args: InvokeParams) =>
   new Promise<InvokeResult<T>>((resolve, reject) => {
-    const { headers, files, data, responseType, onUploadProgress, signal, ...rest } = args;
+    const { headers, files, data, responseType, onUploadProgress, signal, ...rest } = fixInvokeParams(args);
     const fileNames = files ? Object.keys(files) : [];
 
     const fail = (obj: unknown) => {

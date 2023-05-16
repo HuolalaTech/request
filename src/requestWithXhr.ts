@@ -6,19 +6,22 @@ import { XhrInvokeResult } from './XhrInvokeResult';
 import { ContentError, FailedToRequest } from './errors';
 import { isContentType, isMultipartFormData, isWwwFormUrlEncoded } from './utils/predicates';
 import { APPLICATION_JSON, CONTENT_TYPE } from './constants';
+import { fixInvokeParams } from './utils/fixInvokeParams';
 
-export const requestWithXhr = <T>({
-  method,
-  url,
-  data,
-  timeout,
-  headers,
-  files = {},
-  responseType,
-  withCredentials = true,
-  signal,
-  onUploadProgress,
-}: InvokeParams) => {
+export const requestWithXhr = <T>(params: InvokeParams) => {
+  const {
+    method,
+    url,
+    data,
+    timeout,
+    headers,
+    files = {},
+    responseType,
+    withCredentials = true,
+    signal,
+    onUploadProgress,
+  } = fixInvokeParams(params);
+
   return new Promise<InvokeResult<T>>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
 

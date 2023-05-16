@@ -2,6 +2,7 @@ import { InvokeResult } from './types/InvokeResult';
 import { InvokeParams } from './types/InvokeParams';
 import { BatchUploadError, MiniProgramError } from './errors';
 import { Wx } from './types/Wx';
+import { fixInvokeParams } from './utils/fixInvokeParams';
 
 declare const wx: Wx;
 
@@ -15,7 +16,7 @@ const convertResponseType = (responseType?: InvokeParams['responseType']) => {
 
 export const requestWithWx = <T>(args: InvokeParams) =>
   new Promise<InvokeResult<T>>((resolve, reject) => {
-    const { headers, files, data, responseType, onUploadProgress, signal, ...rest } = args;
+    const { headers, files, data, responseType, onUploadProgress, signal, ...rest } = fixInvokeParams(args);
     const fileNames = files ? Object.keys(files) : [];
 
     const fail = (obj: unknown) => {

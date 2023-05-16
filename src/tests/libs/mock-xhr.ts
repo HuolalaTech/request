@@ -71,26 +71,28 @@ global.XMLHttpRequest = class implements Partial<XMLHttpRequest> {
 
     const files: Record<string, string> = {};
     let data: Record<string, unknown> | string | undefined;
-    if (typeof body === 'string') {
-      try {
-        data = JSON.parse(body);
-      } catch (error) {
-        data = body;
-      }
-    } else if (body instanceof FormData) {
-      if (!Object.keys(this.headers).some(isContentType)) {
-        this.headers[CONTENT_TYPE] = `${MULTIPART_FORM_DATA}; boundary=----WebKitFormBoundaryHehehehe`;
-      }
-      const temp: Record<string, unknown> = {};
-      const tasks = Array.from(body, async ([k, v]) => {
-        if (v instanceof File) {
-          files[k] = await readAsDataURL(v);
-        } else {
-          temp[k] = v;
+    if (method !== 'GET' && method !== 'HEAD') {
+      if (typeof body === 'string') {
+        try {
+          data = JSON.parse(body);
+        } catch (error) {
+          data = body;
         }
-      });
-      await Promise.all(tasks);
-      data = temp;
+      } else if (body instanceof FormData) {
+        if (!Object.keys(this.headers).some(isContentType)) {
+          this.headers[CONTENT_TYPE] = `${MULTIPART_FORM_DATA}; boundary=----WebKitFormBoundaryHehehehe`;
+        }
+        const temp: Record<string, unknown> = {};
+        const tasks = Array.from(body, async ([k, v]) => {
+          if (v instanceof File) {
+            files[k] = await readAsDataURL(v);
+          } else {
+            temp[k] = v;
+          }
+        });
+        await Promise.all(tasks);
+        data = temp;
+      }
     }
 
     await new Promise((f) => setTimeout(f));

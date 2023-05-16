@@ -2,6 +2,7 @@ import { InvokeResult } from './types/InvokeResult';
 import { InvokeParams } from './types/InvokeParams';
 import { BatchUploadError, MiniProgramError } from './errors';
 import { My } from './types/My';
+import { fixInvokeParams } from './utils/fixInvokeParams';
 
 declare const my: My;
 
@@ -14,7 +15,7 @@ const convertResponseType = (responseType?: InvokeParams['responseType']) => {
 
 export const requestWithMy = <T>(args: InvokeParams) =>
   new Promise<InvokeResult<T>>((resolve, reject) => {
-    const { headers, files, data, responseType, onUploadProgress, signal, ...rest } = args;
+    const { headers, files, data, responseType, onUploadProgress, signal, ...rest } = fixInvokeParams(args);
     const fileNames = files ? Object.keys(files) : [];
 
     const fail = (obj: unknown) => {

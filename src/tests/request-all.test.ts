@@ -118,5 +118,23 @@ describe('all libs tests', () => {
       expect(onUploadProgress).toHaveBeenCalledTimes(1);
       expect(onUploadProgress).toHaveBeenNthCalledWith(1, { total: 1000, loaded: 1000 });
     });
+
+    test(`[${name}] GET method take data`, async () => {
+      const params = { method: 'GET', url: '/test', data: { a: 1, b: 2, c: [1, 2] } };
+      const res = await request<string>({ ...params });
+      expect(res.data).toMatchObject({
+        method: 'GET',
+        url: '/test?a=1&b=2&c=1&c=2',
+      });
+    });
+
+    test(`[${name}] HEAD method take data`, async () => {
+      const params = { method: 'HEAD', url: '/test?x=1', data: { a: 1, b: 2, c: [1, 2] } };
+      const res = await request<string>({ ...params });
+      expect(res.data).toMatchObject({
+        method: 'HEAD',
+        url: '/test?x=1&a=1&b=2&c=1&c=2',
+      });
+    });
   }
 });
