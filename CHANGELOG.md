@@ -1,5 +1,13 @@
+## 1.1.1
+
+- Update dependencies
+- Support QS mixin for GET and HEAD methods
+- extract makeArray util
+- Add QueryStringBuilder
+
 ## 1.1.0
 
+- Update dependencies
 - Fix test coverage
 - Remove unused code
 - Remove AbortedPromise and use AbortSignal instead
