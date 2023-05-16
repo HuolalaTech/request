@@ -1,4 +1,4 @@
-import { buildQs } from '../../utils/buildQs';
+import { buildQs } from '../../utils/QueryStringBuilder';
 
 test('basic', () => {
   expect(buildQs({ a: 1 })).toBe('a=1');
@@ -39,4 +39,36 @@ test('non-object', () => {
 test('special', () => {
   expect(buildQs(() => 0)).toBe('');
   expect(buildQs(/hehe/)).toBe('');
+});
+
+test('array', () => {
+  expect(buildQs({ a: [1, 2] })).toBe('a=1&a=2');
+});
+
+test('nested array', () => {
+  expect(buildQs({ a: [1, 2, [3, 4]] })).toBe('a=1&a=2&a=%5B3%2C4%5D');
+});
+
+test('bad array', () => {
+  const a: number[] = [1, 2, 3];
+  a.forEach = () => null;
+  expect(buildQs({ a })).toBe('a=1&a=2&a=3');
+});
+
+test('huge array', () => {
+  const a: number[] = Array(1e5);
+  a[10] = 1;
+  expect(buildQs({ a })).toBe('a=1');
+});
+
+test('undefined', () => {
+  expect(buildQs({ a: 1, b: undefined, c: null })).toBe('a=1&c=null');
+});
+
+test('undefined in array', () => {
+  expect(buildQs({ a: [1, 2, undefined, 4] })).toBe('a=1&a=2&a=4');
+});
+
+test('bigint', () => {
+  expect(buildQs({ a: BigInt(1e23) })).toBe('a=99999999999999991611392');
 });
