@@ -16,18 +16,18 @@ npm install @huolala-tech/request --save
 
 ## Params
 
-| name              | type                                              | description                             |
-| ----------------- | ------------------------------------------------- | --------------------------------------- |
-| method (required) | string                                            | Request method                          |
-| url (required)    | string                                            | Request URL                             |
-| data              | any                                               | Request payload                         |
-| timeout           | number                                            | Request timeout in milliseconds         |
-| headers           | Record\<string, string\>                          | Request header                          |
-| files             | Record\<string, Blob \| File \| string\>          | Payload files                           |
-| responseType      | text \| json \| arraybuffer \| blob \| document   | Response type                           |
-| withCredentials   | boolean                                           | The withCredentials flag for XHR object |
-| signal            | AbortSignal                                       | An abort signal like fetch              |
-| onUploadProgress  | (info: { total: number, loaded: number }) => void | The uploading progress event            |
+| name              | type                                              | description                                            |
+| ----------------- | ------------------------------------------------- | ------------------------------------------------------ |
+| method (required) | string                                            | Request method                                         |
+| url (required)    | string                                            | Request URL                                            |
+| data              | any                                               | Request payload (or query string for GET/HEAD methods) |
+| timeout           | number                                            | Request timeout in milliseconds                        |
+| headers           | Record\<string, string\>                          | Request header                                         |
+| files             | Record\<string, Blob \| File \| string\>          | Payload files                                          |
+| responseType      | text \| json \| arraybuffer \| blob \| document   | Response type                                          |
+| withCredentials   | boolean                                           | The withCredentials flag for XHR object                |
+| signal            | AbortSignal                                       | An abort signal like fetch                             |
+| onUploadProgress  | (info: { total: number, loaded: number }) => void | The uploading progress event                           |
 
 > NOTE 1: The `method` field
 >
