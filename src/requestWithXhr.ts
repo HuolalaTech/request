@@ -76,9 +76,7 @@ export const requestWithXhr = <T>(params: InvokeParams) => {
       }
       // The FormData provides the Content-Type with correct boundary value.
       // Do not set the Content-Type explicitly, otherwise the boundary value may be lose.
-      const fd = buildFormData(data);
-      fileKeys.forEach((key) => fd.append(key, files[key]));
-      xhr.send(fd);
+      xhr.send(buildFormData({ ...data, ...files }));
     } else if (data) {
       // If the content type is not provided, use the application/json as the default.
       if (!contentType) {

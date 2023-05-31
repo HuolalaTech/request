@@ -40,12 +40,12 @@ export const fixInvokeParams = ({ ...args }: InvokeParams) => {
 
     // Merge preservedQs and appendingQs.
     // NOTE: Some MiniProgram platforms cannot support multiple values in same key.
-    //       For examples:
+    //       For example:
     //       - url: "/path?a=1” data: { a: 2 }, which will be merged to "/path?a=2".
     //       - url: "/path?a=1&a=2” data: {}, which will be merged to "path?a=2".
     //       Obviously, this is NOT a smart implementation.
     //       Although there is no definitive standard for the multiple values in single key,
-    //       but most web frameworks such as Java Spring Framework define this usage to transfer an array of arguments.
+    //       but most Web frameworks such as Java Spring Framework define this usage to transfer an array of arguments.
     //       Therefore, our implementation retains support for the multiple values in single key.
     //
     let qs = preservedQs;
