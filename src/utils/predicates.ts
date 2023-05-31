@@ -7,6 +7,7 @@ const createMediaTypePredicate = (ct: string) => {
    * type = token
    * subtype = token
    * parameter = token "=" ( token / quoted-string )
+   *
    * NOTE: The type, subtype, and parameter name tokens are case-insensitive.
    */
   const pattern = new RegExp(`^${ct}(?:\\s*;|$)`, 'i');
