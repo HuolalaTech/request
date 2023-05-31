@@ -1,4 +1,4 @@
-import { buildQs } from '../../utils/QueryStringBuilder';
+import { buildQs } from '../../utils/builders';
 
 test('basic', () => {
   expect(buildQs({ a: 1 })).toBe('a=1');
@@ -71,4 +71,8 @@ test('undefined in array', () => {
 
 test('bigint', () => {
   expect(buildQs({ a: BigInt(1e23) })).toBe('a=99999999999999991611392');
+});
+
+test('URLSearchParams', () => {
+  expect(buildQs(new URLSearchParams({ a: '1', b: '2' }))).toBe('a=1&b=2');
 });

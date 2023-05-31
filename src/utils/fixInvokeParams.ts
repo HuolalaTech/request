@@ -1,5 +1,5 @@
 import { InvokeParams } from '../types/InvokeParams';
-import { buildQs } from './QueryStringBuilder';
+import { buildQs } from './builders';
 import { assertNotNull } from './assertions';
 
 export const fixInvokeParams = ({ ...args }: InvokeParams) => {

@@ -11,7 +11,7 @@
     "lint": "eslint src",
     "format": "prettier src -w",
     "prepublishOnly": "yarn build",
-    "test": "jest"
+    "test": "jest src --coverage"
   },
   "files": [
     "dist"

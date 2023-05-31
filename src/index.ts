@@ -7,6 +7,7 @@ import type { InvokeResult } from './types/InvokeResult';
 export * from './errors';
 export * from './constants';
 export * from './RequestController';
+export * from './utils/builders';
 
 export { isApplicationJson, isMultipartFormData, isWwwFormUrlEncoded } from './utils/predicates';
 

@@ -1,7 +1,7 @@
 import { InvokeResult } from './types/InvokeResult';
 import { InvokeParams } from './types/InvokeParams';
-import { buildFormData } from './utils/buildFormData';
-import { buildQs } from './utils/QueryStringBuilder';
+import { buildFormData } from './utils/builders';
+import { buildQs } from './utils/builders';
 import { XhrInvokeResult } from './XhrInvokeResult';
 import { ContentError, FailedToRequest } from './errors';
 import { isContentType, isMultipartFormData, isWwwFormUrlEncoded } from './utils/predicates';

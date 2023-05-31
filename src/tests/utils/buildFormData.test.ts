@@ -1,4 +1,4 @@
-import { buildFormData } from '../../utils/buildFormData';
+import { buildFormData } from '../../utils/builders';
 
 test('basic', () => {
   const fd = buildFormData({ a: 1, b: 'two' });
