@@ -1,3 +1,13 @@
+## 1.1.2
+
+- Update dependencies
+- Format comments
+- Refactor matrixForEach
+- Update .gitignore
+- Refactor and export builders
+- Refactor fixInvokeParams.ts
+- Update README.md
+
 ## 1.1.1
 
 - Update dependencies
