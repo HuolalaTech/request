@@ -1,5 +1,5 @@
 import { InvokeResult } from './types/InvokeResult';
-import { parseRawHeaderAsMap } from './utils/parseRawHeaderAsMap';
+import { parseRawHeadersToMap } from './utils/parseRawHeadersToMap';
 
 export class XhrInvokeResult<T> implements InvokeResult<T> {
   public statusCode: number;
@@ -16,7 +16,7 @@ export class XhrInvokeResult<T> implements InvokeResult<T> {
         configurable: true,
         enumerable: true,
         get: () => {
-          const value = parseRawHeaderAsMap(xhr.getAllResponseHeaders());
+          const value = parseRawHeadersToMap(xhr.getAllResponseHeaders());
           // This getter will be called only once, and the result will be cached in the property value.
           Object.defineProperty(this, 'headers', {
             configurable: true,
