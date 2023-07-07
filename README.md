@@ -79,7 +79,7 @@ async function main() {
 
 ## Advanced Features
 
-#### 1. Interceptors
+### 1. Interceptors
 
 > Taking into account the learning cost, our interceptors API design is modeled after the Axios.
 
@@ -100,3 +100,20 @@ interceptors.response.use((res) => {
 
 request({ method: 'POST', url: 'http://localhost/api/user' });
 ```
+
+### 2. New Instance
+
+You can use `create` method to create a pairs `request` and `intercepters` and set a common request parameters.
+
+```typescript
+import { create } from '@huolala-tech/request';
+const { request, interceptors } = create({
+  header: {
+    'x-request-with': '@huolala-tech/request'
+  }
+});
+
+// TODO
+```
+
+> NOTE: The created pairs is an isolated instance, global `intercepters` will not act on the created `request`.
