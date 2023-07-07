@@ -1,3 +1,13 @@
+## 1.1.3
+
+- Update workflow config
+- Update README.md
+- Add `create` function
+- Remove single instance restriction
+- Update dependecies
+- Uglify dist
+- Refactor parseRawHeadersToMap
+
 ## 1.1.2
 
 - Update dependencies

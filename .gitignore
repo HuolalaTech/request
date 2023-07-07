@@ -10,3 +10,4 @@ coverage
 !.husky
 !.prettierignore
 !.prettierrc
+!.github
