@@ -93,22 +93,3 @@ export function request(args: InvokeParams) {
   // Execute response handlers as a pipeline.
   return Interceptor.pipeline(response, task, context);
 }
-
-// Find the globalThis object across browsers and miniprogram platforms.
-declare const global: unknown;
-const globalThis =
-  typeof window === 'object' ? window : typeof global === 'object' ? global : /* istanbul ignore next */ null;
-if (globalThis) {
-  // This key is the MD5 hash of the package name.
-  const key = '54f09acea52941258aca926266ecf866';
-  if (key in globalThis) {
-    // Throw an error if this key was set in the global object.
-    console.error(new Error(`The "request" lib was installed duplicately with different versions.`));
-  } else {
-    // Set the key to the global object.
-    Object.defineProperty(globalThis, key, {
-      configurable: true,
-      value: request,
-    });
-  }
-}
