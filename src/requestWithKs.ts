@@ -20,9 +20,7 @@ export const requestWithKs = <T>(args: InvokeParams) =>
     const fileNames = files ? Object.keys(files) : [];
 
     const fail = (obj: unknown) => {
-      /**
-       * @see https://developer.open-douyin.com/docs/resource/zh-CN/mini-app/develop/api/network/http/tt-request#_%E5%9B%9E%E8%B0%83%E5%A4%B1%E8%B4%A5
-       */
+      // Perhaps the official is joking with us, so important information actually no documentation :joy:.
       const { errCode, errMsg } = Object(obj);
       reject(new MiniProgramError(errCode, errMsg));
     };
@@ -30,7 +28,7 @@ export const requestWithKs = <T>(args: InvokeParams) =>
     try {
       if (fileNames.length === 0) {
         /**
-         * @see https://developer.open-douyin.com/docs/resource/zh-CN/mini-app/develop/api/network/http/tt-request
+         * @see https://mp.kuaishou.com/docs/develop/api/network/request/request.html
          */
         const task = ks.request({
           header: headers,
@@ -48,7 +46,7 @@ export const requestWithKs = <T>(args: InvokeParams) =>
         const name = fileNames[0];
         const filePath = files[name];
         /**
-         * @see https://developer.open-douyin.com/docs/resource/zh-CN/mini-app/develop/api/network/http/tt-upload-file
+         * @see https://mp.kuaishou.com/docs/develop/api/network/upload/uploadFile.html
          */
         const task = ks.uploadFile({
           header: headers,
