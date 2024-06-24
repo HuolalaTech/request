@@ -11,7 +11,7 @@ const convertResponseType = (responseType?: InvokeParams['responseType']) => {
   if (responseType === 'arraybuffer') return { responseType } as const;
   if (responseType === 'json') return { dataType: 'json' } as const;
   if (responseType === 'text') return { dataType: 'string' } as const;
-  throw new TypeError(`The responseType "${responseType}" is not supported by DouYin Miniprogram`);
+  throw new TypeError(`The responseType "${responseType}" is not supported by Kuaishou Miniprogram`);
 };
 
 export const requestWithKs = <T>(args: InvokeParams) =>
@@ -41,7 +41,7 @@ export const requestWithKs = <T>(args: InvokeParams) =>
         signal?.addEventListener('abort', () => task.abort());
       } else if (files && fileNames.length === 1) {
         if (responseType) {
-          throw new TypeError('The `responseType` is not supported if `files` not empty in DouYin Miniprogram');
+          throw new TypeError('The `responseType` is not supported if `files` not empty in Kuaishou Miniprogram');
         }
         const name = fileNames[0];
         const filePath = files[name];
