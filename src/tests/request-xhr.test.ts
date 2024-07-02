@@ -136,3 +136,39 @@ test(`abort`, async () => {
   controller.abort();
   expect(req).rejects.toBeInstanceOf(FailedToRequest);
 });
+
+describe('each value without content-type', () => {
+  test.each([
+    [undefined, ''],
+    ['', ''],
+    [null, null],
+    ['null', null],
+    [true, true],
+    [false, false],
+    ['true', true],
+    ['false', false],
+    [NaN, null],
+    [0, 0],
+    [1, 1],
+    ['1', 1],
+    [{ a: 1 }, { a: 1 }],
+    ['{"a":1}', { a: 1 }],
+  ])(`send %p receive %p`, async (a, b) => {
+    const res = requestWithXhr({
+      method: 'POST',
+      url: '/test',
+      data: a,
+    });
+    expect(res).resolves.toMatchObject({
+      data: {
+        data: b,
+        files: {},
+        headers: { [CONTENT_TYPE]: APPLICATION_JSON },
+        method: 'POST',
+        url: '/test',
+      },
+      headers: { server: 'mock' },
+      statusCode: 200,
+    });
+  });
+});

@@ -76,28 +76,27 @@ export const requestWithXhr = <T>(params: InvokeParams) => {
       }
       // The FormData provides the Content-Type with correct boundary value.
       // Do not set the Content-Type explicitly, otherwise the boundary value may be lose.
-      xhr.send(buildFormData({ ...data, ...files }));
-    } else if (data) {
-      // If the content type is not provided, use the application/json as the default.
-      if (!contentType) {
-        xhr.setRequestHeader(CONTENT_TYPE, APPLICATION_JSON);
-        xhr.send(JSON.stringify(data));
-      }
-      // Serialize the data according to the specified Content-Type.
-      else if (isWwwFormUrlEncoded(contentType)) {
-        xhr.setRequestHeader(CONTENT_TYPE, contentType);
-        xhr.send(buildQs(data));
-      } else if (isMultipartFormData(contentType)) {
-        // The FormData provides the Content-Type with correct boundary value.
-        // Do not set the Content-Type explicitly, otherwise the boundary value may be lose.
-        xhr.send(buildFormData(data));
-      } else {
-        xhr.setRequestHeader(CONTENT_TYPE, contentType);
-        xhr.send(JSON.stringify(data));
-      }
-    } else {
-      xhr.send();
+      xhr.send(buildFormData({ ...Object(data), ...files }));
     }
+    // The string data does not need to be stringified again (this behavior follows Miniprogram).
+    else if (typeof data === 'string') {
+      xhr.setRequestHeader(CONTENT_TYPE, contentType || APPLICATION_JSON);
+      xhr.send(data);
+    }
+    // Serialize the data according to the specified Content-Type.
+    else if (contentType && isWwwFormUrlEncoded(contentType)) {
+      xhr.setRequestHeader(CONTENT_TYPE, contentType);
+      xhr.send(buildQs(data));
+    }
+    // The FormData provides the Content-Type with correct boundary value.
+    // Do not set the Content-Type explicitly, otherwise the boundary value may be lose.
+    else if (contentType && isMultipartFormData(contentType)) {
+      xhr.send(buildFormData(data));
+    } else {
+      xhr.setRequestHeader(CONTENT_TYPE, contentType || APPLICATION_JSON);
+      xhr.send(JSON.stringify(data));
+    }
+
     // Bind abort event.
     signal?.addEventListener('abort', () => xhr.abort());
   });

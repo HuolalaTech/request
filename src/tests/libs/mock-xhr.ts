@@ -70,7 +70,7 @@ global.XMLHttpRequest = class implements Partial<XMLHttpRequest> {
     await new Promise((f) => setTimeout(f));
 
     const files: Record<string, string> = {};
-    let data: Record<string, unknown> | string | undefined;
+    let data: unknown;
     if (method !== 'GET' && method !== 'HEAD') {
       if (typeof body === 'string') {
         try {

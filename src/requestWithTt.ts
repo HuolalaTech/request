@@ -52,7 +52,7 @@ export const requestWithTt = <T>(args: InvokeParams) =>
          */
         const task = tt.uploadFile({
           header: headers,
-          formData: data,
+          formData: Object(data),
           name,
           filePath,
           ...rest,
