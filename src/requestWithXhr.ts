@@ -68,31 +68,43 @@ export const requestWithXhr = <T>(params: InvokeParams) => {
       });
     }
 
-    const fileKeys = Object.keys(files);
-    // If file list is not empty, construct the data as a FormData object and send it with multipart/form-data.
-    if (fileKeys.length) {
-      if (contentType && !isMultipartFormData(contentType)) {
-        throw new ContentError(contentType);
-      }
-      // The FormData provides the Content-Type with correct boundary value.
-      // Do not set the Content-Type explicitly, otherwise the boundary value may be lose.
+    // Case 1: The files uploading.
+    // If the file list is not empty, build the data as a FormData and send.
+    if (Object.keys(files).length) {
+      // Assert the Content-Type is MultipartFormData or undefined.
+      if (contentType && !isMultipartFormData(contentType)) throw new ContentError(contentType);
+      // The native FormData object automatically generates a unique and correct boundary value in the Content-Type.
+      // Therefore, the Content-Type must not be set explicitly here;
+      // otherwise, the boundary value will be lose, causing the server to parse the body incorrectly.
       xhr.send(buildFormData({ ...Object(data), ...files }));
     }
+
+    // Case 2: The stringified body.
     // The string data does not need to be stringified again (this behavior follows Miniprogram).
+    // Send the data directly with a custom Content-Type, defaulting to ApplicationJson.
     else if (typeof data === 'string') {
       xhr.setRequestHeader(CONTENT_TYPE, contentType || APPLICATION_JSON);
       xhr.send(data);
     }
-    // Serialize the data according to the specified Content-Type.
+
+    // Case 3: Explicitly using WwwFormUrlEncoded.
+    // Serialize the data to a QueryString and send.
     else if (contentType && isWwwFormUrlEncoded(contentType)) {
       xhr.setRequestHeader(CONTENT_TYPE, contentType);
       xhr.send(buildQs(data));
     }
-    // The FormData provides the Content-Type with correct boundary value.
+
+    // Case 4: Explicitly using FormData (without files).
     // Do not set the Content-Type explicitly, otherwise the boundary value may be lose.
     else if (contentType && isMultipartFormData(contentType)) {
+      // The native FormData object automatically generates the correct Content-Type for better compatibility,
+      // so the Content-Type should not be set manually here.
       xhr.send(buildFormData(data));
-    } else {
+    }
+
+    // Case 5: Otherwise.
+    // Send the data as JSON with a custom Content-Type, defaulting to ApplicationJson.
+    else {
       xhr.setRequestHeader(CONTENT_TYPE, contentType || APPLICATION_JSON);
       xhr.send(JSON.stringify(data));
     }

@@ -1,6 +1,6 @@
-import { APPLICATION_JSON, CONTENT_TYPE, MULTIPART_FORM_DATA, WWW_FORM_URLENCODED } from '../constants';
+import { CONTENT_TYPE, APPLICATION_JSON, MULTIPART_FORM_DATA, WWW_FORM_URLENCODED } from '../constants';
 
-const createMediaTypePredicate = (ct: string) => {
+const createMediaTypePredicate = <T extends string>(ct: T) => {
   /**
    * @see https://datatracker.ietf.org/doc/html/rfc7231#section-3.1.1.1
    * media-type = type "/" subtype *( OWS ";" OWS parameter )
@@ -10,8 +10,12 @@ const createMediaTypePredicate = (ct: string) => {
    *
    * NOTE: The type, subtype, and parameter name tokens are case-insensitive.
    */
+  type CS<T extends string> = `${Lowercase<T> | Uppercase<T>}`;
+  type PS<T extends string> = `${T}; ${string}`;
   const pattern = new RegExp(`^${ct}(?:\\s*;|$)`, 'i');
-  return RegExp.prototype.test.bind(pattern);
+  // Infact, this pattern only tests the input with the "i" flag, and does not completely match the type declaration.
+  // Nevertheless, a stricter type constraint is preferable to the default "string" type.
+  return RegExp.prototype.test.bind(pattern) as (s: string) => s is CS<T> | PS<CS<T>>;
 };
 
 /**
