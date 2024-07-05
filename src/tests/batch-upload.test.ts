@@ -7,8 +7,10 @@ import './libs/mock-xhr';
 import './libs/mock-wx';
 import './libs/mock-my';
 import './libs/mock-swan';
+import './libs/mock-ks';
 import { BatchUploadError } from '../errors';
 import { requestWithTt } from '../requestWithTt';
+import { requestWithKs } from '../requestWithKs';
 
 describe('all libs tests', () => {
   for (const [name, request] of [
@@ -16,6 +18,7 @@ describe('all libs tests', () => {
     ['my', requestWithMy],
     ['tt', requestWithTt],
     ['swan', requestWithSwan],
+    ['ks', requestWithKs],
   ] as const) {
     test(`[${name}] batch upload error`, async () => {
       const f1 = new Blob(['f1'], { type: 'text/plain' });
