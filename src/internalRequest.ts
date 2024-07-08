@@ -16,7 +16,7 @@ declare const wx: Wx;
 declare const my: My;
 declare const swan: Swan;
 declare const tt: Swan;
-declare const ks: Ks
+declare const ks: Ks;
 
 export const internalRequest = <T>(args: InvokeParams) => {
   // Detect the current platform and call the corresponding method.
@@ -25,7 +25,7 @@ export const internalRequest = <T>(args: InvokeParams) => {
     // detect the existence of document object to determine if it is a browser platform.
     case typeof XMLHttpRequest === 'function' && typeof document === 'object' && document !== null:
       return requestWithXhr<T>(args);
-    // Noted that the 'ks' must be used ahead of 'wx', because kuaishou just copied wx's base code and has the 'wx' 
+    // Noted that the 'ks' must be used ahead of 'wx', because kuaishou just copied wx's base code and has the 'wx'
     // variable left in the runtime.
     case typeof ks === 'object' && isValidMpo(ks):
       return requestWithKs<T>(args);

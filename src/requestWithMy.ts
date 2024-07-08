@@ -53,7 +53,7 @@ export const requestWithMy = <T>(args: InvokeParams) =>
          */
         const task = my.uploadFile({
           header: headers,
-          formData: data,
+          formData: Object(data),
           name,
           filePath,
           ...rest,

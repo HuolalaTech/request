@@ -12,7 +12,6 @@ import { RequestController } from '../RequestController';
 import { requestWithTt } from '../requestWithTt';
 import { requestWithKs } from '../requestWithKs';
 
-
 describe('all libs tests', () => {
   for (const [name, request] of [
     ['wx', requestWithWx],

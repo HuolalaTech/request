@@ -50,7 +50,7 @@ export const requestWithSwan = <T>(args: InvokeParams) =>
          */
         const task = swan.uploadFile({
           header: headers,
-          formData: data,
+          formData: Object(data),
           name,
           filePath,
           ...rest,

@@ -26,7 +26,7 @@ export interface RequestParams<T = Response> {
   header?: Header;
   responseType?: 'text' | 'arraybuffer';
   dataType?: 'json' | 'string';
-  data?: Record<string, unknown>;
+  data?: unknown;
 }
 
 export interface UploadParams<T = Response> {

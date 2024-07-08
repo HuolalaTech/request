@@ -50,7 +50,7 @@ export const requestWithKs = <T>(args: InvokeParams) =>
          */
         const task = ks.uploadFile({
           header: headers,
-          formData: data,
+          formData: Object(data),
           name,
           filePath,
           ...rest,

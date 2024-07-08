@@ -52,7 +52,7 @@ export const requestWithWx = <T>(args: InvokeParams) =>
          */
         const task = wx.uploadFile({
           header: headers,
-          formData: data,
+          formData: Object(data),
           name,
           filePath,
           ...rest,

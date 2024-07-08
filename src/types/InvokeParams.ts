@@ -17,7 +17,7 @@ export interface InvokeParams {
    *
    * NOTE: For GET method, the `data` will be converted to a query string.
    */
-  data?: Record<string, unknown>;
+  data?: unknown;
 
   /**
    * Specify a timeout in milliseconds.
