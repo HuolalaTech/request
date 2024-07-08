@@ -88,7 +88,7 @@ import { request, interceptors } from '@huolala-tech/request';
 
 // Add Authorization: xxx header for all requests.
 interceptors.request.use((req) => {
-  args.headers = { ...Object(args.headers), Authorization: 'xxx' };
+  req.headers = { ...Object(req.headers), Authorization: 'xxx' };
 });
 
 // If any request responds with a 401 code, go to login.

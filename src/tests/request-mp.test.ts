@@ -6,9 +6,11 @@ import './libs/mock-wx';
 import './libs/mock-my';
 import './libs/mock-tt';
 import './libs/mock-swan';
+import './libs/mock-ks';
 import { MiniProgramError } from '../errors';
 import { RequestController } from '../RequestController';
 import { requestWithTt } from '../requestWithTt';
+import { requestWithKs } from '../requestWithKs';
 
 describe('all libs tests', () => {
   for (const [name, request] of [
@@ -16,6 +18,7 @@ describe('all libs tests', () => {
     ['my', requestWithMy],
     ['tt', requestWithTt],
     ['swan', requestWithSwan],
+    ['ks', requestWithKs],
   ] as const) {
     test(`[${name}] fail`, async () => {
       const params = { method: 'GET', url: '/test' };
